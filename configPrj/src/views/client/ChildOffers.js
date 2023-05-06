@@ -1,5 +1,5 @@
 import { useEffect, useReducer } from "react";
-import { Column } from "../../other/Components/Html";
+import { Column, P } from "../../other/Components/Html";
 
 
 const categoryReducer = (state, action) => {
@@ -29,7 +29,7 @@ const Login = () => {
 
   return (
     <Column>
-        <Column>{state.count}</Column>
+        <P>{state.count}</P>
     </Column>
   );
 };

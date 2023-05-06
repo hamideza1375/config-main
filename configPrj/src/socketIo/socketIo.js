@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, FlatList, Platform, Animated, SafeAreaView } from 'react-native'
+import { View, FlatList, Platform, Animated, SafeAreaView, Keyboard } from 'react-native'
 import { useFocusEffect } from '@react-navigation/native';
 import { A_icon, Badge, Column, Img, Modal, P, Press, Row } from '../other/Components/Html';
 import Video from '../other/Components/other/Video';
@@ -12,7 +12,6 @@ import jwt_decode from 'jwt-decode'
 import moment from 'moment-jalaali';
 import Icon from 'react-native-vector-icons/dist/FontAwesome5';
 import _useEffect from '../controllers/_initial';
-import { Keyboard } from 'react-native';
 import download from '../other/utils/download';
 let adminId
 

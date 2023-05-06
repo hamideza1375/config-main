@@ -8,7 +8,7 @@ let BootstrapInput = forwardRef((p, ref) => {
       p.$.id('p').$({innerHTML:Math.floor(Math.random() * 1000)})
     },
   }));
-  return <TextInput style={{height:50, width:200, borderWidth:1}} ref={ref} {...p} />;
+  return <TextInput style={{ width:200, borderWidth:1}} ref={ref} {...p} />;
 });
 
 
@@ -19,7 +19,7 @@ const ChildOffers = (p) => {
   const handleFocus = () => {inputRef.current.focus()}
 
   return (
-    <Column>
+    <Column h={50} >
       <BootstrapInput onChange={handleFocus} type="text" className="form-control" ref={inputRef} {...p} />
       <P id='p' >salammm</P>
     </Column>

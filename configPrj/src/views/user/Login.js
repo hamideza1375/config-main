@@ -1,5 +1,5 @@
 import { useReducer } from "react";
-import { Button, Column } from "../../other/Components/Html";
+import { Button, Column, P} from "../../other/Components/Html";
 
 
 const reducer = (state, action) => {
@@ -21,7 +21,7 @@ const Login = () => {
   return (
     <Column>
       <Button onClick={increment}>INCREMENT</Button>
-        <Column>{state.count}</Column>
+        <P>{state.count}</P>
       <Button onClick={decrement}>DECREMENT</Button>
     </Column>
   );

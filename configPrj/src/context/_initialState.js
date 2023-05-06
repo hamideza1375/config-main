@@ -84,12 +84,14 @@ export function initial() {
   const [address1YearsForChart, setaddress1YearsForChart] = useState([])
 
   const [changeProduct, setchangeProduct] = useState(false)
-  const [socketIoSeen, setsocketIoSeen] = useState(false)
+
   const [productBasket, setproductBasket] = useState([])
-const refMap = useRef()
+  const [socketIoSeen, setsocketIoSeen] = useState(false)
+  const refMap = useRef(new Map())
+
 
   this.all = {
-    refMap,
+    refMap: refMap,
     productBasket, setproductBasket,
     socketIoSeen, setsocketIoSeen,
     changeProduct, setchangeProduct,

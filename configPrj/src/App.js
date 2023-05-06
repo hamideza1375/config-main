@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Platform, LogBox, I18nManager, StatusBar } from "react-native";
@@ -76,17 +76,15 @@ import spacePrice from "./other/utils/spacePrice";
 import { ErrorBoundary } from "react-error-boundary";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNetInfo } from "@react-native-community/netinfo";
+import { myhost } from "./other/utils/axios/axios";
 
 rtl()
 LogBox.ignoreAllLogs();
 
 
 
-
-
 const Tab = createNativeStackNavigator()
 const Mobile = () => {
-
 
   useEffect(() => { setTimeout(() => { if ((Platform.OS !== 'web') && (!I18nManager.isRTL)) { reload() } }, 3000) }, [])
 
@@ -100,19 +98,40 @@ const Mobile = () => {
   const _user = new userController({ ...allState.user, toast })
   const _client = new clientController({ ...allState.client, toast })
 
+  const [show, setshow] = useState(false)
+  const netInfo = useNetInfo()
 
+  useEffect(() => {
+    setTimeout(() => {
+      netInfo.isConnected && setshow(true)
+    }, 500);
+  }, [netInfo])
+
+  
   return (
+    <>
+
+      {allState.init.splash ?
+        <Column pos='absolute' t={0} l={0} r={0} b={0} z={111111} h={'100%'} w={'100%'} bgcolor='#fff' pb={Platform.OS === 'ios' ? 10 : 1} f={1} maxh={allState.init.height} >
+          <Img src={allState.init.logoUrl} f={1} style={{ resizeMode: 'stretch' }} />
+          <ToastProvider {...allState.init} />
+          {netInfo.isConnected && show ? <Button outline onClick={() => { reload() }} >بارگذاری مجدد</Button> : <></>}
+        </Column>
+        :
+        <></>
+      }
+
       <contextStates.Provider value={{ ...allState.init, toast }}>
         <Dropdown root {...allState.init}><Press onClick={() => { }} >{allState.init.dropdownValue}</Press></Dropdown>
         <StatusBar backgroundColor='#d29' barStyle={"light-content"} />
-        {allState.init.splash ?
-          <Column pb={Platform.OS === 'ios' ? 10 : 1} f={1} maxh={allState.init.height} >
-            <ToastProvider {...allState.init} />
+        {!show ?
+          <Column pos='absolute' t={0} l={0} r={0} b={0} z={111111} h={'100%'} w={'100%'} bgcolor='#fff' pb={Platform.OS === 'ios' ? 10 : 1} f={1} maxh={allState.init.height} >
             <Img src={allState.init.logoUrl} f={1} style={{ resizeMode: 'stretch' }} />
-            <Button outline onClick={() => { reload() }} >بارگذاری مجدد</Button>
+            <ToastProvider {...allState.init} />
+            {netInfo.isConnected && show ? <Button outline onClick={() => { reload() }} >بارگذاری مجدد</Button> : <></>}
           </Column>
           :
-          <Column f={1} w='100%' minw={280} onClick={() => { allState.init.shownDropdown && allState.init.setshownDropdown(false); allState.init.$input?.get('dropdownDrawer')?.current?.setNativeProps({ style: { display: 'flex', transform: [{ scale: 0 }] } }) }}>
+            <Column f={1} w='100%' minw={280} onClick={() => { allState.init.shownDropdown && allState.init.setshownDropdown(false); allState.init.$input?.get('dropdownDrawer')?.current?.setNativeProps({ style: { display: 'flex', transform: [{ scale: 0 }] } }) }}>
             <ToastProvider {...allState.init} />
             <Init ref={(e) => allState.init.set$(e)} id={'s'} />
             <Tab.Navigator screenOptions={() => { return { headerTitleStyle: { color: 'transparent' }, headerTitleAlign: 'center', ...icon } }} >
@@ -176,14 +195,20 @@ const Mobile = () => {
                 <Tab.Screen initialParams={{ key: 'admin', set: 'true' }} name="ShowLatLngOnMap" options={{ title: 'نمایش آدرس روی نقشه', headerShown: true }} {...adminChildren(ShowLatLngOnMap)} />
                 <Tab.Screen initialParams={{ key: 'admin' }} name="SendPostPrice" options={{ title: 'تایین قیمت پست' }} {...adminChildren(SendPostPrice)} />
               </Tab.Group>
-
               <Tab.Screen name="NotFound" options={{ title: '404', headerShown: false }} {...clientChildren(_404)} />
             </Tab.Navigator >
           </Column>
         }
       </contextStates.Provider>
+    </>
   )
+
+
+
+
 }
+
+
 
 
 initialPropType(Home)
@@ -306,15 +331,12 @@ const linking = {
 };
 
 
-
 let deferredInstall
 let _App
 if (Platform.OS !== 'web') {
   _App = () => {
     return (
-      <NavigationContainer>
-        <Mobile />
-      </NavigationContainer>
+      <Mobile />
     )
   }
 }
@@ -340,14 +362,13 @@ else {
     }
 
     return (
-      <NavigationContainer linking={linking} >
-        <Column onStartShouldSetResponderCapture={installStatus} style={{ width: '100%', overflow: 'hidden', flex: 1 }} dir='rtl' >
-          <Mobile />
-        </Column>
-      </NavigationContainer>
+      <Column onStartShouldSetResponderCapture={installStatus} style={{ width: '100%', overflow: 'hidden', flex: 1 }} dir='rtl' >
+        <Mobile />
+      </Column>
     )
   }
 }
+
 
 
 let App = () => {
@@ -355,16 +376,20 @@ let App = () => {
   const netInfo = useNetInfo()
 
   return (
-    <ErrorBoundary fallback={
-      <Column style={{ width: '70%', marginTop: 20, padding: 12, display: 'flex', alignSelf: 'center', alignItems: 'center', justifyContent: 'center', borderBottomWidth: 1 }} >
-        <P style={{ fontFamily: 'IRANSansWeb', fontWeight: 'bold' }} >اتفاق غیر منتظره ای رخ داد</P>
-        <Press onClick={reload} style={{ marginTop: 15, width: 95, height: 37, borderWidth: 1, borderRadius: 4, borderColor: '#08e', justifyContent: 'center', alignItems: 'center' }} >
-          <P style={{ fontFamily: 'IRANSansWeb', color: '#08e', fontSize: 12 }} >بارگذاری مجدد</P>
-        </Press>
-        {netInfo.isConnected === false ? <P fs={13} mt={12} color='red' style={{ fontFamily: 'IRANSansWeb' }} >اتصال اینترنتتان را چک کنید</P> : <></> }
-      </Column>} >
-      <_App />
-    </ErrorBoundary>
+    <NavigationContainer>
+
+      <ErrorBoundary fallback={
+        <Column style={{ width: '70%', marginTop: 20, padding: 12, display: 'flex', alignSelf: 'center', alignItems: 'center', justifyContent: 'center', borderBottomWidth: 1 }} >
+          <P style={{ fontFamily: 'IRANSansWeb', fontWeight: 'bold' }} >اتفاق غیر منتظره ای رخ داد</P>
+          <Press onClick={Platform.OS === 'web' ? () => { location.href = myhost } : reload} style={{ marginTop: 15, width: 95, height: 37, borderWidth: 1, borderRadius: 4, borderColor: '#08e', justifyContent: 'center', alignItems: 'center' }} >
+            <P style={{ fontFamily: 'IRANSansWeb', color: '#08e', fontSize: 12 }} >بارگذاری مجدد</P>
+          </Press>
+          {netInfo.isConnected === false ? <P fs={13} mt={12} color='red' style={{ fontFamily: 'IRANSansWeb' }} >اتصال اینترنتتان را چک کنید</P> : <></>}
+        </Column>} >
+        <_App />
+      </ErrorBoundary>
+    </NavigationContainer>
+
   )
 }
 
