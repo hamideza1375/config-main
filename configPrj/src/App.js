@@ -122,7 +122,6 @@ const Mobile = () => {
       }
 
       <contextStates.Provider value={{ ...allState.init, toast }}>
-        <Dropdown root {...allState.init}><Press onClick={() => { }} >{allState.init.dropdownValue}</Press></Dropdown>
         <StatusBar backgroundColor='#d29' barStyle={"light-content"} />
         {!show ?
           <Column pos='absolute' t={0} l={0} r={0} b={0} z={111111} h={'100%'} w={'100%'} bgcolor='#fff' pb={Platform.OS === 'ios' ? 10 : 1} f={1} maxh={allState.init.height} >
@@ -131,9 +130,10 @@ const Mobile = () => {
             {netInfo.isConnected && show ? <Button outline onClick={() => { reload() }} >بارگذاری مجدد</Button> : <></>}
           </Column>
           :
-            <Column f={1} w='100%' minw={280} onClick={() => { allState.init.shownDropdown && allState.init.setshownDropdown(false); allState.init.$input?.get('dropdownDrawer')?.current?.setNativeProps({ style: { display: 'flex', transform: [{ scale: 0 }] } }) }}>
-            <ToastProvider {...allState.init} />
+          <Column f={1} w='100%' minw={280} onClick={() => { allState.init.shownDropdown && allState.init.setshownDropdown(false); allState.init.$input?.get('dropdownDrawer')?.current?.setNativeProps({ style: { display: 'flex', transform: [{ scale: 0 }] } }) }}>
+            <Dropdown root {...allState.init}><Press onClick={() => { }} >{allState.init.dropdownValue}</Press></Dropdown>
             <Init ref={(e) => allState.init.set$(e)} id={'s'} />
+            <ToastProvider {...allState.init} />
             <Tab.Navigator screenOptions={() => { return { headerTitleStyle: { color: 'transparent' }, headerTitleAlign: 'center', ...icon } }} >
               <Tab.Group>
                 <Tab.Screen initialParams={{ key: 'client' }} name="Home" options={{ title: 'دیجی کالا', headerShown: false }} {...clientChildren(Home, '1')} />
@@ -336,7 +336,9 @@ let _App
 if (Platform.OS !== 'web') {
   _App = () => {
     return (
+      <NavigationContainer>
       <Mobile />
+      </NavigationContainer>
     )
   }
 }
@@ -362,9 +364,12 @@ else {
     }
 
     return (
-      <Column onStartShouldSetResponderCapture={installStatus} style={{ width: '100%', overflow: 'hidden', flex: 1 }} dir='rtl' >
+      <NavigationContainer linking={linking} >
+      <Column onStartShouldSetResponderCapture={installStatus} style={{ width: '100%', height:'100%'}} >
         <Mobile />
       </Column>
+    </NavigationContainer>
+
     )
   }
 }
@@ -376,8 +381,6 @@ let App = () => {
   const netInfo = useNetInfo()
 
   return (
-    <NavigationContainer>
-
       <ErrorBoundary fallback={
         <Column style={{ width: '70%', marginTop: 20, padding: 12, display: 'flex', alignSelf: 'center', alignItems: 'center', justifyContent: 'center', borderBottomWidth: 1 }} >
           <P style={{ fontFamily: 'IRANSansWeb', fontWeight: 'bold' }} >اتفاق غیر منتظره ای رخ داد</P>
@@ -388,8 +391,6 @@ let App = () => {
         </Column>} >
         <_App />
       </ErrorBoundary>
-    </NavigationContainer>
-
   )
 }
 
