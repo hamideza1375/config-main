@@ -136,7 +136,7 @@ const Mobile = () => {
             <ToastProvider {...allState.init} />
             <Tab.Navigator screenOptions={() => { return { headerTitleStyle: { color: 'transparent' }, headerTitleAlign: 'center', ...icon } }} >
               <Tab.Group>
-                <Tab.Screen name="Home" options={{ title: 'دیجی کالا', headerShown: false }} {...clientChildren(Home, '1')} />
+                <Tab.Screen initialParams={{ key: 'client' }} name="Home" options={{ title: 'دیجی کالا', headerShown: false }} {...clientChildren(Home, '1')} />
                 <Tab.Screen initialParams={{ key: 'client' }} name="Products" options={{ title: 'محصولات', headerShown: false }} {...clientChildren(Products, '1')} />
                 <Tab.Screen initialParams={{ key: 'client' }} name="ChildOffers" options={{ title: 'تخفیف ها', headerShown: false }} {...clientChildren(ChildOffers, '1')} />
                 <Tab.Screen initialParams={{ key: 'client' }} name="ChildPopulars" options={{ title: 'محبوب ها', headerShown: false }} {...clientChildren(ChildPopulars, '1')} />
@@ -271,7 +271,7 @@ const linking = {
   // prefixes: ['localhost:3000://', 'http://localhost:3000'],
   config: {
     screens: {
-      Home: '/',
+      Home: '/:key',
       Products: '/products/:id',
       ChildOffers: '/childoffers',
       ChildPopulars: '/childpopulars',
