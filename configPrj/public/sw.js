@@ -5,8 +5,19 @@ const preCache = [
   '/',
   '/css/font.css',
   
-  '/static/js/main.e089b3ce.js',
-  '/static/css/main.07888fbc.css',
+  '/fonts/AntDesign.ttf',
+  '/fonts/B Baran Regular.ttf',
+  '/fonts/FontAwesome5_Brands.ttf',
+  '/fonts/FontAwesome5_Regular.ttf',
+  '/fonts/FontAwesome5_Solid.ttf',
+  '/fonts/IRANSansWeb_Bold.ttf',
+  '/fonts/IRANSansWeb_Light.ttf',
+  '/fonts/IRANSansWeb.ttf',
+  '/fonts/MaterialIcons.ttf',
+  '/fonts/Yekan Bakh Regular.ttf',
+  
+  "/static/css/main.b3565330.css",
+  "/static/js/main.397ce9ac.js",
 
   '/logo.png',
 ];
