@@ -1,9 +1,9 @@
 import { Column } from '../../other/Components/Html'
 
-const SetAddressForm = () => {
+const AddAdmin = () => {
   return (
-    <Column>SetAddressForm</Column>
+    <Column>AddAdmin</Column>
   )
 }
 
-export default SetAddressForm
+export default AddAdmin

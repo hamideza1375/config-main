@@ -1,9 +1,9 @@
 import { Column } from '../../other/Components/Html'
 
-const ListUnAvailable = () => {
+const AddAdmin = () => {
   return (
-    <Column>ListUnAvailable</Column>
+    <Column>AddAdmin</Column>
   )
 }
 
-export default ListUnAvailable
+export default AddAdmin

@@ -1,9 +1,9 @@
 import { Column } from '../../other/Components/Html'
 
-const Notifee = () => {
+const AddAdmin = () => {
   return (
-    <Column>Notifee</Column>
+    <Column>AddAdmin</Column>
   )
 }
 
-export default Notifee
+export default AddAdmin

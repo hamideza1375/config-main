@@ -1,36 +1,46 @@
-import { useNavigation } from '@react-navigation/native';
-import React from 'react'
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import React, { useCallback } from 'react'
 import { Platform, SafeAreaView, Pressable, View } from 'react-native';
 import TopTab from '../Components/tabNavigation/TopTab';
 import { ContainerTab, Icon } from '../Components/Html';
 import HomePage from './page/HomePage';
-import ChildItemPage from './page/ChildItemPage';
-import SingleItemPage from './page/SingleItemPage';
-import TableChildItemsPage from './page/TableChildItemsPage';
+import ProductsPage from './page/ProductsPage';
+import SingleProductPage from './page/SingleProductPage';
+import ProductsTablePage from './page/ProductsTablePage';
 import ProfilePage from './page/ProfilePage';
 import PanelAdminPage from './page/PanelAdminPage';
 import SellerPage from './page/SellersPage';
 import SellerPanelPage from './page/SellerPanelPage';
 import AddressPage from './page/AddressPage';
-import ChildOffersPage from './page/ChildOffersPage';
-import ChildPopularsPage from './page/ChildPopularsPage';
+import BeforePaymentPage from './page/BeforePaymentPage';
+import ProductsOffersPage from './page/ProductsOffersPage';
+import ProductsPopularsPage from './page/ProductsPopularsPage';
 
 
 export const Layout = (p) => {
+
+
+  useFocusEffect(useCallback(() => {
+    if (p._key === '1') { p.sethomeNavigate(); p.sethomeParams() }
+    return () => {
+      if (p._key === '1') { p.sethomeNavigate(p.route.name); p.sethomeParams(p.route.params) }
+    }
+  }, []))
+
 
   const topUser = [{ name: 'Register', title: 'ثبت نام' }, { name: 'Login', title: 'ورود' }]
 
   let bottom
   bottom = p.tokenValue.fullname ?
     [
-      { mainTitle: 'Home', title: ((p._key == '1') ? p.route.name : 'Home'), icon: 'home' },
+      { mainTitle: 'Home', title: ((p._key === '1') ? (p.route.name) : ('Home')), icon: 'home', navigate: p.homeNavigate, params: p.homeParams },
       { title: 'Profile', icon: 'user-alt' },
       { title: 'BeforePayment', icon: 'shopping-cart' },
       { title: 'SocketIo', icon: 'comments' },
     ]
     :
     bottom = [
-      { mainTitle: 'Home', title: ((p._key == '1') ? p.route.name : 'Home'), icon: 'home' },
+      { mainTitle: 'Home', title: ((p._key === '1') ? (p.route.name) : ('Home')), icon: 'home', navigate: p.homeNavigate, params: p.homeParams },
       { title: 'Login', icon: 'user-alt' },
       { title: 'BeforePayment', icon: 'shopping-cart', navigate: 'Login', params: { payment: true } },
       { title: 'SocketIo', icon: 'comments' },
@@ -38,29 +48,28 @@ export const Layout = (p) => {
 
   return (
     <View style={{ flex: 1, paddingHorizontal: Platform.OS === 'ios' ? (p.width > p.height ? 40 : 0) : 0, paddingBottom: Platform.OS === 'ios' ? 10 : 0 }} >
-      <SafeAreaView style={{backgroundColor:"#d293"}} />
+      <SafeAreaView style={{ backgroundColor: "#d293" }} />
       <View style={{ flex: 1, overflow: 'hidden' }}>
         {
-          p.route.params?.active === 'no' && (
-          <TopTab name={p.route.name} group={topUser} >{p.children}</TopTab>)
+          p.route.params?.active === 'no' && (<TopTab name={p.route.name} group={topUser} >{p.children}</TopTab>)
           ||
           p.route.name === 'Home' &&
           <HomePage {...p} bottom={bottom} />
           ||
-          p.route.name === 'ChildItems' &&
-          <ChildItemPage {...p} bottom={bottom} />
+          p.route.name === 'Products' &&
+          <ProductsPage {...p} bottom={bottom} />
           ||
-          p.route.name === 'ChildOffers' &&
-          <ChildOffersPage {...p} bottom={bottom} />
+          p.route.name === 'ProductsOffers' &&
+          <ProductsOffersPage {...p} bottom={bottom} />
           ||
-          p.route.name === 'ChildPopulars' &&
-          <ChildPopularsPage {...p} bottom={bottom} />
+          p.route.name === 'ProductsPopulars' &&
+          <ProductsPopularsPage {...p} bottom={bottom} />
           ||
-          p.route.name === 'TableChildItems' &&
-          <TableChildItemsPage {...p} bottom={bottom} />
+          p.route.name === 'ProductsTable' &&
+          <ProductsTablePage {...p} bottom={bottom} />
           ||
-          p.route.name === 'SingleItem' &&
-          <SingleItemPage {...p} bottom={bottom} />
+          p.route.name === 'SingleProduct' &&
+          <SingleProductPage {...p} bottom={bottom} />
           ||
           (p.route.params?.key === 'admin') && (!p.route.params?.set) && (p.route.name !== 'Address') && (p.route.name !== 'Sellers') &&
           <PanelAdminPage {...p} bottom={bottom} />
@@ -76,6 +85,9 @@ export const Layout = (p) => {
           ||
           p.route.name === 'Address' &&
           <AddressPage {...p} bottom={bottom} />
+          ||
+          p.route.name === 'BeforePayment' &&
+          <BeforePaymentPage {...p} bottom={bottom} />
           ||
           <ContainerTab >{p.children}</ContainerTab>
         }

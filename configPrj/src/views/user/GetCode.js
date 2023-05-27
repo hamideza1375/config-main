@@ -1,9 +1,9 @@
-import { Column } from '../../other/Components/Html'
+import { Column } from "../../other/Components/Html"
 
-const GetCode = () => {
+const ForgetPass = () => {
   return (
-    <Column>GetCode</Column>
+    <Column>ForgetPass</Column>
   )
 }
 
-export default GetCode
+export default ForgetPass

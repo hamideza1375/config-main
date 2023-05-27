@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Dimensions, Platform } from "react-native";
+import { Dimensions } from "react-native";
 import PropTypes from 'prop-types';
 
 export function initial() {
@@ -75,32 +75,33 @@ export function initial() {
   const [state, setstate] = useState('')
   const [latlng, setlatlng] = useState({ lat: 0, lng: 0 })
   const [postPrice, setpostPrice] = useState(35000)
-  const [logoUrl, setlogoUrl] = useState(require('../other/assets/images/logo.png'))
   const [changePage, setchangePage] = useState(false)
-
-  const [usersLength, setusersLength] = useState('')
-  const [users7DeyForChart, setusers7DeyForChart] = useState([])
-  const [address7DeyForChart, setaddress7DeyForChart] = useState([])
-  const [address1YearsForChart, setaddress1YearsForChart] = useState([])
-
+  
   const [changeProduct, setchangeProduct] = useState(false)
-
-  const [productBasket, setproductBasket] = useState([])
+  
   const [socketIoSeen, setsocketIoSeen] = useState(false)
+  const [productBasket, setproductBasket] = useState([])
   const refMap = useRef(new Map())
+  const [logoUrl] = useState(require('../other/assets/images/logo.png'))
+  const refDropdown = useRef()
+  const [rootOpacity, setrootOpacity] = useState(1)
+
+  const [homeNavigate, sethomeNavigate] = useState('')
+  const [homeParams, sethomeParams] = useState('')
 
 
   this.all = {
-    refMap: refMap,
-    productBasket, setproductBasket,
+    // logoUrl: Platform.OS === 'web' ? '/logo.png' : require('../other/assets/images/logo.png'),
+    homeNavigate, sethomeNavigate,
+    homeParams, sethomeParams,
+    rootOpacity, setrootOpacity,
+    refDropdown,
+    refMap,
     socketIoSeen, setsocketIoSeen,
+    productBasket, setproductBasket,
     changeProduct, setchangeProduct,
-    users7DeyForChart, setusers7DeyForChart,
-    usersLength, setusersLength,
-    address7DeyForChart, setaddress7DeyForChart,
-    address1YearsForChart, setaddress1YearsForChart,
     changePage, setchangePage,
-    logoUrl: Platform.OS === 'web' ? '/logo.png' : require('../other/assets/images/logo.png'), setlogoUrl,
+    logoUrl:logoUrl,
     postPrice, setpostPrice,
     latlng, setlatlng,
     state, setstate, City, setCity,

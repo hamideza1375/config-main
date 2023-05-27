@@ -9,13 +9,10 @@ var
 
 const ProgressChart = ({ color = '#222', rodWidth = 30, bgcolor = '#fff', br = 2, w = '100%', h = '100%', data }) => {
 
-  const [change, setchange] = useState(false)
 
   const checkSend = useRef([])
   const queueSend = useRef([])
   const send = useRef([])
-
-
 
 
   const pushArrayRef = useRef([])
@@ -24,7 +21,7 @@ const ProgressChart = ({ color = '#222', rodWidth = 30, bgcolor = '#fff', br = 2
   let pushArray = pushArrayRef.current
   let pushArray7 = pushArrayRef7.current
 
-
+const [change, setchange] = useState(false)
   useEffect(() => {
     pushArray = []
     pushArray7 = []
@@ -81,15 +78,13 @@ const ProgressChart = ({ color = '#222', rodWidth = 30, bgcolor = '#fff', br = 2
         if (moment(new Date(i.date)).format('jD') == pushMond2[pushMond2.length - 7]?.days && pushMond2[pushMond2.length - 7]?.date.getMonth().toString() == new Date(i.date).getMonth().toString() && (i.send === 1)) send.current.push(i.send)
 
       }
-  }, [data])
-
+  }, [data, change])
 
   useEffect(() => {
     setTimeout(() => {
       setchange(true)
-    }, 1000);
+    }, 100);
   }, [])
-
 
   return (
     <>

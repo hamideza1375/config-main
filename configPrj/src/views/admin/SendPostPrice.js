@@ -1,9 +1,9 @@
 import { Column } from '../../other/Components/Html'
 
-const SendPostPrice = () => {
+const AddAdmin = () => {
   return (
-    <Column>SendPostPrice</Column>
+    <Column>AddAdmin</Column>
   )
 }
 
-export default SendPostPrice
+export default AddAdmin

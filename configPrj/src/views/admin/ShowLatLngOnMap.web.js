@@ -1,9 +1,9 @@
 import { Column } from '../../other/Components/Html'
 
-const ShowLatLngOnMap = () => {
+const AddAdmin = () => {
   return (
-    <Column>ShowLatLngOnMap</Column>
+    <Column>AddAdmin</Column>
   )
 }
 
-export default ShowLatLngOnMap
+export default AddAdmin

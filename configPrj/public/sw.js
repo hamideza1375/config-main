@@ -2,12 +2,12 @@ const version = 6;
 const preCacheName = `static-${version}`;
 const preCache = [
   '/',
-  '/client',
-  '/?key=client',
-  '/:key',
+  '/home',
+  '/?key=home',
   '/childpopulars?key=client',
   '/beforepayment?key=client',
   '/profile?key=user',
+  
   '/css/font.css',
 
   '/fonts/AntDesign.ttf',

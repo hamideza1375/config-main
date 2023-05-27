@@ -1,7 +1,7 @@
 import { Platform } from "react-native";
-import { Column, Dropdown, Icon, Input, M_icon, Press } from "../../other/Components/Html";
-import { axios, localhost } from "../../other/utils/axios/axios";
-import { imagePicker } from "../../other/utils/imagePicer";
+import { Column, Dropdown, Icon, Input, M_icon, Press } from "../../../other/Components/Html";
+import { axios, localhost } from "../../../other/utils/axios/axios";
+import { imagePicker } from "../../../other/utils/imagePicer";
 
 export default function InputBottom(p) {
 
@@ -91,7 +91,7 @@ export default function InputBottom(p) {
       <Column w='95%' >
         <Column col1={{ left: 75 }} style={{ position: 'absolute', left: 90, zIndex: 111, }}>
           <Column w={30} h={50} jc='center' ai='center'  >
-            <Dropdown top={35} value={
+            <Dropdown top={50} value={
               <Press onClick={()=>{}} fd='row' h={60} jc='center' ai='center' border={3} >
                 <Press h={'100%'} border={[1,'silver']} onClick={_imagePicker}  w={60} jc='center' ai='center' >
                   <Icon name={'image'} size={25} color={'#777'} />
@@ -116,7 +116,6 @@ export default function InputBottom(p) {
         <Input multiline maxLength={1000} min={99} style={{ minHeight: 50 }} iconSize={24}
           value={p.pvMessage} onChange={(e) =>{ p.setpvMessage(e.nativeEvent.text); p.handleKeypress(e, p.to)}}
           iconPress={() => { p.handlePvChat(); p.setpvMessage('') }} icon="paper-plane" iconColor="#38a" color="#25a" placeholder="ارسال پیام"
-
         />
       </Column>
     </Column>

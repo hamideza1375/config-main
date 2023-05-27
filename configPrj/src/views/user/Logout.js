@@ -1,7 +1,9 @@
-import { Column } from '../../other/Components/Html'
+import { Column } from "../../other/Components/Html"
 
-const Logout = (p) => {
-  // p._user.logout()
-  return <Column />;
-};
-export default Logout;
+const ForgetPass = () => {
+  return (
+    <Column>ForgetPass</Column>
+  )
+}
+
+export default ForgetPass

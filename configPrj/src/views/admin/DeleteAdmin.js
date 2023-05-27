@@ -1,9 +1,9 @@
 import { Column } from '../../other/Components/Html'
 
-const DeleteAdmin = () => {
+const AddAdmin = () => {
   return (
-    <Column>DeleteAdmin</Column>
+    <Column>AddAdmin</Column>
   )
 }
 
-export default DeleteAdmin
+export default AddAdmin

@@ -1,9 +1,9 @@
 import { Column } from '../../other/Components/Html'
 
-const AdminTicketBox = () => {
+const AddAdmin = () => {
   return (
-    <Column>AdminTicketBox</Column>
+    <Column>AddAdmin</Column>
   )
 }
 
-export default AdminTicketBox
+export default AddAdmin

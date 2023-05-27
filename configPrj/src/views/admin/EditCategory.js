@@ -1,9 +1,9 @@
 import { Column } from '../../other/Components/Html'
 
-const EditCategory = () => {
+const AddAdmin = () => {
   return (
-    <Column>EditCategory</Column>
+    <Column>AddAdmin</Column>
   )
 }
 
-export default EditCategory
+export default AddAdmin

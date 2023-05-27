@@ -152,7 +152,8 @@ const FilterListDrawer = (p) => {
 
 
   useEffect(() => {
-    const filterArray = p.array?.filter((f, i) => (
+
+    const filterArray = p.array.filter((f, i) => (
       ((brandFilter) ? (f.title?.toLowerCase().match(brandFilter?.toLowerCase())) : (f.title)) &&
       ((ramFilter) ? (f.ram >= ramFilter[0] && f.ram <= ramFilter[1]) : (f.ram)) &&
       ((cameraFilter) ? (f.camera >= cameraFilter[0] && f.camera <= cameraFilter[1]) : (f.camera)) &&
@@ -166,7 +167,9 @@ const FilterListDrawer = (p) => {
       ((priceFilter) ? (f.price >= priceFilter[0] && f.price <= priceFilter[1]) : (f.price)) &&
       ((isEnabled === false) ? (f.title) : (f.available === 1 && f.available > 0))
     ))
-    p.setarray && p.setarray(filterArray);
+
+    p.setarray(filterArray);
+
   }, [/* brandFilter, ramFilter, cameraFilter, storageFilter, displayFilter, cpuCoreFilter, cpuCoreFilter, operatingSystemFilter, operatingSystemFilter, networkFilter, batteryFilter,colorFilter,priceFilter, isEnabled */])
 
 
@@ -177,14 +180,14 @@ const FilterListDrawer = (p) => {
   return (
     <>
 
-      <Column z={10000000000} minw={150} maxw={200} w={200} mt={10} maxh={p.height - 70} minh={'80%'} bgcolor='#fffe' f={1}
-        col={p.show ? { right: -200, position: 'absolute' } : { position: 'absolute', right: 0 }}
-        col1={p.show ? { right: -200, position: 'absolute' } : { position: 'absolute', right: 0 }}
-        style={p.show ? { right: -200, position: 'absolute' } : { position: 'absolute', right: 0 }}
+      <Column border={[2,'#ffaaff']} bbw={0} br={4} pt={8} z={10000000000} ai='center' minw={150} maxw={'97%'} w={'97%'} mt={10} maxh={p.height - 70} minh={'80%'} bgcolor='#fffe' f={1}
+        col={p.show ? { right: -200, position: 'absolute' } : { position: 'absolute', right: 3 }}
+        col1={p.show ? { right: -200, position: 'absolute' } : { position: 'absolute', right: 3 }}
+        style={p.show ? { right: -200, position: 'absolute' } : { position: 'absolute', right: 3 }}
       >
-        <Scroll minw='105%' >
+        <Scroll w='95%'  >
 
-          <Column fd={!isEnabled ? 'row' : 'row-reverse'} jc={'center'} mb={5} ph={7} >
+          <Column fd={!isEnabled ? 'row' : 'row-reverse'} jc={'center'} mb={7} ph={7} >
             {!isEnabled ?
               <P mt={1} ml={5} fs={11} >نمایش دستگاه های موجود</P>
               :
@@ -193,7 +196,7 @@ const FilterListDrawer = (p) => {
           </Column>
 
           <Column>
-            <_list h={45} br={5} sh={{ r: 5, o: .1 }} color='black' bgcolor='#ff77cc22' hidden={hidden} sethidden={sethidden} fontSize={12} iconSize={20} m_icon='arrow-left'
+            <_list h={45} br={5} sh={{ r: 5, o: .1 }} color='black' bgcolor='#ffaaff77' hidden={hidden} sethidden={sethidden} fontSize={12} iconSize={20} m_icon='arrow-left'
               header={'برند'} bodyRow={
                 <Column>
                   {brandFilterValue && brandFilterValue.map((child, index) => (
@@ -213,7 +216,7 @@ const FilterListDrawer = (p) => {
 
 
           <Column>
-            <_list h={45} br={5} sh={{ r: 5, o: .1 }} color='black' bgcolor='#ff77cc22' hidden={hidden} sethidden={sethidden} fontSize={12} iconSize={20} m_icon='arrow-left'
+            <_list h={45} br={5} sh={{ r: 5, o: .1 }} color='black' bgcolor='#ffaaff77' hidden={hidden} sethidden={sethidden} fontSize={12} iconSize={20} m_icon='arrow-left'
               header={'قیمت'} bodyRow={
                 <Column>
                   {priceFilterValue && priceFilterValue.map((child, index) => (
@@ -233,7 +236,7 @@ const FilterListDrawer = (p) => {
 
 
           <Column>
-            <_list h={45} br={5} sh={{ r: 5, o: .1 }} color='black' bgcolor='#ff77cc22' hidden={hidden} sethidden={sethidden} fontSize={12} iconSize={20} m_icon='arrow-left'
+            <_list h={45} br={5} sh={{ r: 5, o: .1 }} color='black' bgcolor='#ffaaff77' hidden={hidden} sethidden={sethidden} fontSize={12} iconSize={20} m_icon='arrow-left'
               header={'مقدار رم'}
               bodyRow={
                 <Column>
@@ -254,7 +257,7 @@ const FilterListDrawer = (p) => {
 
 
           <Column>
-            <_list h={45} br={5} sh={{ r: 5, o: .1 }} color='black' bgcolor='#ff77cc22' hidden={hidden} sethidden={sethidden} fontSize={12} iconSize={20} m_icon='arrow-left'
+            <_list h={45} br={5} sh={{ r: 5, o: .1 }} color='black' bgcolor='#ffaaff77' hidden={hidden} sethidden={sethidden} fontSize={12} iconSize={20} m_icon='arrow-left'
               header={'تعداد هسته پردازشگر(cpu)'}
               bodyRow={
                 <Column>
@@ -275,7 +278,7 @@ const FilterListDrawer = (p) => {
 
 
           <Column>
-            <_list h={45} br={5} sh={{ r: 5, o: .1 }} color='black' bgcolor='#ff77cc22' hidden={hidden} sethidden={sethidden} fontSize={12} iconSize={20} m_icon='arrow-left'
+            <_list h={45} br={5} sh={{ r: 5, o: .1 }} color='black' bgcolor='#ffaaff77' hidden={hidden} sethidden={sethidden} fontSize={12} iconSize={20} m_icon='arrow-left'
               header={'حافظه'}
               bodyRow={
                 <Column>
@@ -296,7 +299,7 @@ const FilterListDrawer = (p) => {
 
 
           <Column>
-            <_list h={45} br={5} sh={{ r: 5, o: .1 }} color='black' bgcolor='#ff77cc22' hidden={hidden} sethidden={sethidden} fontSize={12} iconSize={20} m_icon='arrow-left'
+            <_list h={45} br={5} sh={{ r: 5, o: .1 }} color='black' bgcolor='#ffaaff77' hidden={hidden} sethidden={sethidden} fontSize={12} iconSize={20} m_icon='arrow-left'
               header={'نوع شبکه اینترنت'}
               bodyRow={
                 <Column>
@@ -317,7 +320,7 @@ const FilterListDrawer = (p) => {
 
 
           <Column>
-            <_list h={45} br={5} sh={{ r: 5, o: .1 }} color='black' bgcolor='#ff77cc22' hidden={hidden} sethidden={sethidden} fontSize={12} iconSize={20} m_icon='arrow-left'
+            <_list h={45} br={5} sh={{ r: 5, o: .1 }} color='black' bgcolor='#ffaaff77' hidden={hidden} sethidden={sethidden} fontSize={12} iconSize={20} m_icon='arrow-left'
               header={'سیستم عامل'}
               bodyRow={
                 <Column>
@@ -338,7 +341,7 @@ const FilterListDrawer = (p) => {
 
 
           <Column>
-            <_list h={45} br={5} sh={{ r: 5, o: .1 }} color='black' bgcolor='#ff77cc22' hidden={hidden} sethidden={sethidden} fontSize={12} iconSize={20} m_icon='arrow-left'
+            <_list h={45} br={5} sh={{ r: 5, o: .1 }} color='black' bgcolor='#ffaaff77' hidden={hidden} sethidden={sethidden} fontSize={12} iconSize={20} m_icon='arrow-left'
               header={'دوربین'}
               bodyRow={
                 <Column>
@@ -359,7 +362,7 @@ const FilterListDrawer = (p) => {
 
 
           <Column>
-            <_list h={45} br={5} sh={{ r: 5, o: .1 }} color='black' bgcolor='#ff77cc22' hidden={hidden} sethidden={sethidden} fontSize={12} iconSize={20} m_icon='arrow-left'
+            <_list h={45} br={5} sh={{ r: 5, o: .1 }} color='black' bgcolor='#ffaaff77' hidden={hidden} sethidden={sethidden} fontSize={12} iconSize={20} m_icon='arrow-left'
               header={'اندازه ی صفحه نمایش'}
               bodyRow={
                 <Column>
@@ -380,7 +383,7 @@ const FilterListDrawer = (p) => {
 
 
           <Column>
-            <_list h={45} br={5} sh={{ r: 5, o: .1 }} color='black' bgcolor='#ff77cc22' hidden={hidden} sethidden={sethidden} fontSize={12} iconSize={20} m_icon='arrow-left'
+            <_list h={45} br={5} sh={{ r: 5, o: .1 }} color='black' bgcolor='#ffaaff77' hidden={hidden} sethidden={sethidden} fontSize={12} iconSize={20} m_icon='arrow-left'
               header={'رنگ'}
               bodyRow={
                 <Column>
@@ -400,8 +403,8 @@ const FilterListDrawer = (p) => {
           </Column>
 
 
-          <Column>
-            <_list h={45} br={5} sh={{ r: 5, o: .1 }} color='black' bgcolor='#ff77cc22' hidden={hidden} sethidden={sethidden} fontSize={12} iconSize={20} m_icon='arrow-left'
+          <Column >
+            <_list h={45} br={5} sh={{ r: 5, o: .1 }} color='black' bgcolor='#ffaaff77' hidden={hidden} sethidden={sethidden} fontSize={12} iconSize={20} m_icon='arrow-left'
               header={'باطری'}
               bodyRow={
                 <Column>
@@ -423,9 +426,9 @@ const FilterListDrawer = (p) => {
 
         {/* //! lovercase */}
         <Column w={'100%'} ai='center' >
-          <Button mt={10} w={'95%'} as='center' outline h={37} bgcolor='#ff77ccee'
+          <Button mt={10} w={'95%'} as='center' outline h={37} bgcolor='#ff88ee'
             onClick={() => {
-              const filterArray = p.array?.filter((f, i) => (
+              const filterArray = p.array.filter((f, i) => (
                 ((brandFilter) ? (f.title?.toLowerCase().match(brandFilter?.toLowerCase())) : (f.title)) &&
                 ((ramFilter) ? (f.ram >= ramFilter[0] && f.ram <= ramFilter[1]) : (f.ram)) &&
                 ((cameraFilter) ? (f.camera >= cameraFilter[0] && f.camera <= cameraFilter[1]) : (f.camera)) &&

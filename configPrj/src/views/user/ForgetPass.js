@@ -1,4 +1,4 @@
-import { Column } from '../../other/Components/Html'
+import { Column } from "../../other/Components/Html"
 
 const ForgetPass = () => {
   return (
