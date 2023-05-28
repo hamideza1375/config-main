@@ -28,7 +28,6 @@ export const _initController = (p) => {
     var toastOK = (data) => { typeof data !== 'string' ? p.toast.success('موفق آمیز', '√', 2500) : p.toast.success('موفق آمیز', data, 3500); setTimeout(() => { p.setRand(parseInt(Math.random() * 9000 + 1000)); p.refInput.current && p.refInput.current.setNativeProps({ text: '' }); p.setcaptcha('') }, 1000); }
     var toast500 = () => { p.toast.error('خطا ی سرور', 'مشکلی از سمت سرور پیش آمده'); p.setRand(parseInt(Math.random() * 9000 + 1000)); p.refInput.current && p.refInput.current.setNativeProps({ text: '' }); p.setcaptcha('') }
     var toast400 = (error) => { p.toast.error('خطا', typeof error === 'string' ? error : 'خطایی غیر منتظره رخ داد'); p.setRand(parseInt(Math.random() * 9000 + 1000)); p.refInput.current && p.refInput.current.setNativeProps({ text: '' }); p.setcaptcha('') }
-    var toastNetworkError = () => { p.toast.error('خطا ی شبکه', 'اتصال اینترنتتان را برسی کنید') }
     var toastServerError = () => { p.toast.warning('سرور در حال تعمیر', 'لطفا چند دقیقه دیگر امتحان کنید') }
 
     setTimeout(() => { setchange(true) }, 100);
@@ -86,7 +85,6 @@ export const _initController = (p) => {
 
 
   useEffect(() => { p.$input.set('a', 'a') }, [])
-  // useEffect(() => { setTimeout(() => {{p.setSplash(false); p.setshowActivity(false)} }, 200) }, [show])
   useEffect(() => {
     show === true && setTimeout(() => { if (show === true) { p.setSplash(false); p.setshowActivity(false) } }, 200)
     show === false && p.setSplash(true);
@@ -127,7 +125,7 @@ export function allChildren({ client, user, admin }) {
       useEffect(() => { AsyncStorage.getItem("token").then((token) => { if ((props.route.name === 'SetAddressForm' || props.route.name === 'SetAddressInTehran' || props.route.name === 'BeforePayment') && !token) return props.navigation.navigate('Login') }) }, [])
       _useEffect(() => { client.setshownDropdown(false); }, [])
       useEffect(() => { if (props.route.params?.id && !idValidator(props.route.params.id)) return props.navigation.navigate('NotFound') })
-      useEffect(() => { if (props.route.name === 'Home' &&  props.route.params.key !== 'home') return props.navigation.navigate('NotFound') })
+      // useEffect(() => { if (props.route.name === 'Home' &&  props.route.params.key !== 'home') return props.navigation.navigate('NotFound') })
       return <Layout _key={key} {...props} {...client}>{client.showActivity && <Loading setshowActivity={client.setshowActivity} pos='absolute' top={15} time={900000} />}<Component {...props} {...client} {...clientReducer(props)} /></Layout>
     }
   })

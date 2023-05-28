@@ -1,9 +1,9 @@
 import { Column } from "../../other/Components/Html"
 
-const ForgetPass = () => {
+const ShowLastOrder = () => {
   return (
     <Column>ForgetPass</Column>
   )
 }
 
-export default ForgetPass
+export default ShowLastOrder

@@ -9,7 +9,7 @@ import { localhost } from '../../other/utils/axios/axios'
 import { Button, Column } from '../../other/Components/Html'
 
 
-const Location = (p) => {
+const Map = (p) => {
 
   const [token, settoken] = useState({})
   const [userLocationLatLng, setuserLocationLatLng] = useState({})
@@ -198,4 +198,4 @@ const Location = (p) => {
   )
 }
 
-export default Location;
+export default Map;

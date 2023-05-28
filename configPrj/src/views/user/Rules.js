@@ -1,9 +1,9 @@
 import { Column } from "../../other/Components/Html"
 
-const ForgetPass = () => {
+const Rules = () => {
   return (
     <Column>ForgetPass</Column>
   )
 }
 
-export default ForgetPass
+export default Rules

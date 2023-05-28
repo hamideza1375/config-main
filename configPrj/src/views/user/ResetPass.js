@@ -1,9 +1,9 @@
 import { Column } from "../../other/Components/Html"
 
-const ForgetPass = () => {
+const ResetPass = () => {
   return (
     <Column>ForgetPass</Column>
   )
 }
 
-export default ForgetPass
+export default ResetPass
