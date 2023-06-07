@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Platform, LogBox, I18nManager, StatusBar } from "react-native";
+import { Platform, LogBox, I18nManager, StatusBar, useWindowDimensions, Dimensions } from "react-native";
 
 import Home from './views/client/Home'
 import Products from './views/client/Products'
 import ProductsOffers from "./views/client/ProductsOffers";
 import ProductsPopulars from "./views/client/ProductsPopulars";
 import SingleProduct from './views/client/SingleProduct'
-import BeforePayment from './views/client/BeforePayment'
+import ProductBasket from './views/client/BeforePayment'
 import SetAddressForm from "./views/client/SetAddressForm";
 import Map from "./views/client/Map";
 import SetAddressInTehran from "./views/client/SetAddressInTehran";
@@ -30,6 +30,7 @@ import GetTicket from "./views/user/GetTicket";
 import TicketBox from "./views/user/TicketBox";
 import ShowLastOrder from "./views/user/ShowLastOrder";
 import SavedProducts from "./views/user/SavedProducts";
+import ActiveOrder from './views/user/ActiveOrder'
 import Rules from "./views/user/Rules";
 import FramePayment from "./views/user/FramePayment";
 import SellerPanel from "./views/user/SellerPanel";
@@ -57,8 +58,10 @@ import Sellers from "./views/admin/Sellers";
 import AddSeller from "./views/admin/AddSeller";
 import CreateSlider from "./views/admin/CreateSlider";
 import AdminTicketBox from "./views/admin/AdminTicketBox";
+import AdminSocketIo from "./views/socketIo/AdminSocketIo";
 
-import { Button, Dropdown, Img, Init, Column, Press, P } from "./other/Components/Html";
+
+import { Button, Dropdown, Img, Init, Column, Press, P, Icon, M_icon } from "./other/Components/Html";
 import _404 from "./other/Components/404/404";
 import ToastProvider, { Toast } from "./other/utils/toast";
 import { header } from "./other/Layout/Layout";
@@ -76,18 +79,21 @@ import spacePrice from "./other/utils/spacePrice";
 import { ErrorBoundary } from "react-error-boundary";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNetInfo } from "@react-native-community/netinfo";
-import { myhost } from "./other/utils/axios/axios";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
 
 rtl()
 LogBox.ignoreAllLogs();
 
 
 const Tab = createNativeStackNavigator()
+const BottomTab = createBottomTabNavigator()
+let _height
 const Mobile = () => {
 
-  useEffect(() => { setTimeout(() => { if ((Platform.OS !== 'web') && (!I18nManager.isRTL)) { reload() } }, 4000) }, [])
+  useEffect(() => { setTimeout(() => { if ((Platform.OS !== 'web') && (!I18nManager.isRTL)) { reload() } }, 3000) }, [])
 
-  let icon = Platform.OS === 'ios' ? { headerLeft: header } : {}
+  let icon = Platform.OS === 'ios' ? { headerLeft: header } : { headerLeft: header }
   const allState = states()
   const toast = new Toast(allState.client)
   const { clientChildren, userChildren, adminChildren } = new allChildren({ client: { ...allState.client, toast }, user: { ...allState.user, toast }, admin: { ...allState.admin, toast } })
@@ -103,12 +109,45 @@ const Mobile = () => {
   useEffect(() => {
     setTimeout(() => {
       netInfo.isConnected && setshow(true)
-    }, 500);
+    }, 600);
   }, [netInfo])
+
+
+  const [hiddenTab, sethiddenTab] = useState(false)
+  const [showTab, setshowTab] = useState(true)
+
+
+  const inputFocus = () => {
+    if (Platform.OS === 'web')
+      if (navigator?.userAgent?.match('Mobile') == 'Mobile') {
+        setTimeout(() => {
+          let inp = document.getElementsByTagName('input')
+          for (let i = 0; i <= inp.length; i++) {
+            inp[i]?.addEventListener('focus', () => { setshowTab(false) })
+            inp[i]?.addEventListener('blur', () => { setshowTab(true) })
+          }
+        }, 1000);
+
+      }
+  }
+
+  useEffect(() => {
+    _height = Dimensions.get('window').height;
+  }, [])
+
+
+
+  Dimensions.addEventListener('change', ({ window: { width, height } }) => {
+    if (height < _height) setshowTab(false)
+    else setshowTab(true)
+  })
+
+
+  //   if (navigation?.getState()?.routes[0]?.state?.index === 1 || navigation?.getState()?.routes[0]?.state?.index === 0) 
 
   return (
     <>
-      {allState.init.splash ?
+      {(allState.init.splash || !show) ?
         <Column pos='absolute' t={0} l={0} r={0} b={0} z={111111} h={'100%'} w={'100%'} bgcolor='#fff' pb={Platform.OS === 'ios' ? 10 : 1} f={1} maxh={allState.init.height} >
           <Img src={allState.init.logoUrl} f={1} style={{ resizeMode: 'stretch' }} />
           <ToastProvider {...allState.init} />
@@ -119,51 +158,43 @@ const Mobile = () => {
       }
       <contextStates.Provider value={{ ...allState.init, toast }}>
         <StatusBar backgroundColor='#d29' barStyle={"light-content"} />
-        {!show ?
-          <Column pos='absolute' t={0} l={0} r={0} b={0} z={111111} h={'100%'} w={'100%'} bgcolor='#fff' pb={Platform.OS === 'ios' ? 10 : 1} f={1} maxh={allState.init.height} >
-            <Img src={allState.init.logoUrl} f={1} style={{ resizeMode: 'stretch' }} />
-            <ToastProvider {...allState.init} />
-            {netInfo.isConnected && show ? <Button outline onClick={() => { reload() }} >بارگذاری مجدد</Button> : <></>}
-            <Column pos='absolute' z={-10} >
-              <Tab.Navigator>
+        <Column f={1} w='100%' minw={280} onClick={() => { allState.init.shownDropdown && allState.init.setshownDropdown(false); allState.init.$input?.get('dropdownDrawer')?.current?.setNativeProps({ style: { display: 'flex', transform: [{ scale: 0 }] } }) }}>
+          <Dropdown root {...allState.init}><Press onClick={() => { }} >{allState.init.dropdownValue}</Press></Dropdown>
+          <Init ref={(e) => allState.init.set$(e)} id={'s'} />
+          <ToastProvider {...allState.init} />
+          <BottomTab.Navigator screenOptions={({ route }) => ({ tabBarHideOnKeyboard: true, tabBarInactiveTintColor: 'white', tabBarActiveTintColor: '#a05', tabBarActiveBackgroundColor: '#e833a8ee', tabBarInactiveBackgroundColor: '#e833a8ee', headerTitleStyle: { color: 'transparent' }, headerTitleAlign: 'center', ...icon, tabBarStyle: (Platform.OS === 'web' && (navigator?.userAgent?.match('Mobile') == 'Mobile')) ? { display: (showTab ? 'flex' : 'none') } : {}, tabBarBadgeStyle: { backgroundColor: '#0e5' } })}>
+
+            <Tab.Screen name="Client" options={{ title: 'دیجی کالا', headerShown: false, tabBarLabel: '', tabBarIcon: ({ color, size }) => (<Icon name="home" color={color} size={size - 5} />) }} >{() =>
+              <Tab.Navigator initialRouteName="Home" screenListeners={{ focus: inputFocus }} screenOptions={{ headerShown: false }}>
                 <Tab.Screen initialParams={{ key: 'home' }} name="Home" options={{ title: 'دیجی کالا', headerShown: false }} {...clientChildren(Home, '1')} />
                 <Tab.Screen initialParams={{ key: 'client' }} name="Products" options={{ title: 'محصولات', headerShown: false }} {...clientChildren(Products, '1')} />
                 <Tab.Screen initialParams={{ key: 'client' }} name="ProductsOffers" options={{ title: 'تخفیف ها', headerShown: false }} {...clientChildren(ProductsOffers, '1')} />
                 <Tab.Screen initialParams={{ key: 'client' }} name="ProductsPopulars" options={{ title: 'محبوب ها', headerShown: false }} {...clientChildren(ProductsPopulars, '1')} />
                 <Tab.Screen initialParams={{ key: 'client' }} name="SingleProduct" options={({ route }) => ({ title: route.params.title, headerShown: false })} {...clientChildren(SingleProduct, '1')} />
-              </Tab.Navigator>
-            </Column>
-          </Column>
-          :
-          <Column f={1} w='100%' minw={280} onClick={() => { allState.init.shownDropdown && allState.init.setshownDropdown(false); allState.init.$input?.get('dropdownDrawer')?.current?.setNativeProps({ style: { display: 'flex', transform: [{ scale: 0 }] } }) }}>
-            <Dropdown root {...allState.init}><Press onClick={() => { }} >{allState.init.dropdownValue}</Press></Dropdown>
-            <Init ref={(e) => allState.init.set$(e)} id={'s'} />
-            <ToastProvider {...allState.init} />
-            <Tab.Navigator screenOptions={() => { return { headerTitleStyle: { color: 'transparent' }, headerTitleAlign: 'center', ...icon } }} >
-              <Tab.Group>
-                <Tab.Screen initialParams={{ key: 'home' }} name="Home" options={{ title: 'دیجی کالا', headerShown: false }} {...clientChildren(Home, '1')} />
-                <Tab.Screen initialParams={{ key: 'client' }} name="Products" options={{ title: 'محصولات', headerShown: false }} {...clientChildren(Products, '1')} />
-                <Tab.Screen initialParams={{ key: 'client' }} name="ProductsOffers" options={{ title: 'تخفیف ها', headerShown: false }} {...clientChildren(ProductsOffers, '1')} />
-                <Tab.Screen initialParams={{ key: 'client' }} name="ProductsPopulars" options={{ title: 'محبوب ها', headerShown: false }} {...clientChildren(ProductsPopulars, '1')} />
-                <Tab.Screen initialParams={{ key: 'client' }} name="SingleProduct" options={({ route }) => ({ title: route.params.title, headerShown: false })} {...clientChildren(SingleProduct, '1')} />
-                <Tab.Screen initialParams={{ key: 'client' }} name="BeforePayment" options={{ title: `هزینه ی ارسال به سراسر ایران فقط ${spacePrice(allState.init.postPrice)} تومان`, headerStyle: { backgroundColor: '#ddd' }, headerTitleStyle: { color: 'black', fontFamily: Platform.OS === 'ios' ? 'B Baran' : 'B Baran Regular', fontSize: 17 } }} {...clientChildren(BeforePayment)} />
-                <Tab.Screen initialParams={{ key: 'client' }} name="Map" options={{ title: 'نقشه', headerShown: true }} {...clientChildren(Map)} />
-                <Tab.Screen initialParams={{ key: 'client' }} name="SetAddressForm" options={{ title: 'فرم خرید', headerShown: true }} {...clientChildren(SetAddressForm)} />
-                <Tab.Screen initialParams={{ key: 'client' }} name="SetAddressInTehran" options={{ title: 'فرم خرید', headerShown: true }} {...clientChildren(SetAddressInTehran)} />
                 <Tab.Screen initialParams={{ key: 'client' }} name="CreateComment" options={{ title: 'ارسال نظر' }} {...clientChildren(CreateComment)} />
                 <Tab.Screen initialParams={{ key: 'client' }} name="EditComment" options={{ title: 'ویرایش نظر' }} {...clientChildren(EditComment)} />
-                <Tab.Screen initialParams={{ key: 'client' }} name="SocketIo" options={{ title: 'پرسش سوالات', headerShown: true }} {...clientChildren(SocketIo)} />
-              </Tab.Group>
+              </Tab.Navigator>}
+            </Tab.Screen>
 
-              <Tab.Group screenOptions={{ headerShown: false }}>
-                <Tab.Screen initialParams={{ key: 'user', active: 'no' }} name="Register" options={{ headerShown: true, title: 'ثبت نام' }} {...userChildren(Register)} />
-                <Tab.Screen initialParams={{ key: 'user', active: 'no' }} name="Login" options={{ headerShown: true, title: 'ورود' }} {...userChildren(Login)} />
+            <Tab.Screen name="BeforePayment" options={{ tabBarStyle: (Platform.OS === 'web' && (navigator?.userAgent?.match('Mobile') == 'Mobile')) ? { display: showTab ? (hiddenTab ? 'none' : 'flex') : 'none' } : { display: hiddenTab ? 'none' : 'flex' }, tabBarBadge: (allState.init.productBasket && Object.values(allState.init.productBasket).length) ? true : null, headerShown: false, tabBarLabel: '', tabBarIcon: ({ color, size }) => (<Icon name="shopping-cart" color={color} size={size - 5} />) }} >{() =>
+              <Tab.Navigator initialRouteName="ProductBasket" screenListeners={({ navigation }) => ({ focus: () => { inputFocus(); } })} screenOptions={{ headerTitleStyle: { color: 'transparent' }, headerTitleAlign: 'center', ...icon, tabBarStyle: { display: 'none' } }} >
+                <Tab.Screen listeners={{ focus: () => { sethiddenTab(false); } }} initialParams={{ key: 'client' }} name="ProductBasket" options={() => { return ({ headerLeft: () => { }, title: `هزینه ی ارسال به سراسر ایران فقط ${spacePrice(allState.init.postPrice)} تومان`, headerStyle: { backgroundColor: '#ee66aa', }, headerTitleStyle: { color: 'white', fontFamily: Platform.OS === 'ios' ? 'B Baran' : 'B Baran Regular', fontSize: 17, }, headerTitleAlign: 'center' }) }} {...clientChildren(ProductBasket)} />
+                <Tab.Screen listeners={{ focus: () => { sethiddenTab(true); } }} initialParams={{ key: 'client' }} name="SetAddressForm" options={() => { return ({ title: 'فرم خرید', headerShown: true }) }} {...clientChildren(SetAddressForm)} />
+                <Tab.Screen listeners={{ focus: () => { sethiddenTab(true); } }} initialParams={{ key: 'client' }} name="Map" options={() => { return ({ title: 'نقشه', headerShown: true }) }} {...clientChildren(Map)} />
+                <Tab.Screen listeners={{ focus: () => { sethiddenTab(true); } }} initialParams={{ key: 'client' }} name="SetAddressInTehran" options={() => { return ({ title: 'فرم خرید', headerShown: true }) }} {...clientChildren(SetAddressInTehran)} />
+              </Tab.Navigator>}
+            </Tab.Screen>
+
+            <Tab.Screen name="User" options={{ tabBarStyle: (Platform.OS === 'web' && (navigator?.userAgent?.match('Mobile') == 'Mobile')) ? { display: showTab ? (hiddenTab ? 'none' : 'flex') : 'none' } : { display: hiddenTab ? 'none' : 'flex' }, headerShown: false, tabBarInactiveTintColor: '#acfa', tabBarActiveTintColor: '#7bf', tabBarActiveBackgroundColor: '#fafafa', tabBarInactiveBackgroundColor: '#fafafa', tabBarLabel: '', tabBarIcon: ({ color, size }) => (<Icon name="user-alt" color={color} size={size - 5} />) }}>{() =>
+              <Tab.Navigator screenListeners={{ focus: inputFocus }} initialRouteName={allState.init.tokenValue.fullname ? "Profile" : "Login"} screenOptions={() => { return { headerShown: false, headerTitleStyle: { color: 'transparent' }, headerTitleAlign: 'center', ...icon, tabBarStyle: { display: 'none' } } }} >
+                <Tab.Screen initialParams={{ key: 'user' }} name="Profile" listeners={{ focus: () => { sethiddenTab(false); } }} options={() => { return ({ title: 'پنل کاربری', headerShown: false }) }} {...userChildren(Profile)} />
+                <Tab.Screen initialParams={{ key: 'user', active: 'no' }} name="Register" options={{ headerShown: false, title: 'ثبت نام' }} {...userChildren(Register)} />
+                <Tab.Screen initialParams={{ key: 'user', active: 'no' }} name="Login" listeners={{ focus: () => { sethiddenTab(false); } }} options={() => { return { headerShown: false, title: 'ورود' } }} {...userChildren(Login)} />
                 <Tab.Screen initialParams={{ key: 'user', active: 'yess' }} name="ForgetPass" options={{ headerShown: true, title: 'فراموشی رمز عبور', headerTitleStyle: { color: 'black', fontFamily: 'IRANSansWeb', fontSize: 15 }, headerTitleAlign: 'center' }} {...userChildren(ForgetPass)} />
-                <Tab.Screen initialParams={{ key: 'user', active: 'yess' }} name="ResetPass" options={{ headerShown: true, title: 'عوض کردن رمز عبور', headerTitleStyle: { color: 'transparent' }, headerTitleAlign: 'center' }} {...userChildren(ResetPass)} />
+                <Tab.Screen initialParams={{ key: 'user', active: 'yess' }} name="ResetPass" listeners={{ focus: () => { sethiddenTab(true); } }} options={() => { return { headerShown: false, title: 'عوض کردن رمز عبور', headerTitleStyle: { color: 'transparent' }, headerTitleAlign: 'center' } }} {...userChildren(ResetPass)} />
                 <Tab.Screen initialParams={{ key: 'user', active: 'yess' }} name="Rules" options={{ headerShown: true, title: 'قوانین', }} {...userChildren(Rules)} />
-                <Tab.Screen initialParams={{ key: 'user', active: 'yess' }} name="GetCode" options={{ title: 'کد ورود' }} {...userChildren(GetCode)} />
+                <Tab.Screen initialParams={{ key: 'user', active: 'yess' }} name="GetCode" listeners={{ focus: () => { sethiddenTab(true); } }} options={() => { return ({ title: 'کد ورود' }) }} {...userChildren(GetCode)} />
                 <Tab.Screen initialParams={{ key: 'user' }} name="Logout" options={{ title: 'خروج' }} {...userChildren(Logout)} />
-                <Tab.Screen initialParams={{ key: 'user' }} name="Profile" options={{ title: 'پنل کاربری', headerShown: false }} {...userChildren(Profile)} />
                 <Tab.Screen initialParams={{ key: 'user' }} name="SellerPanel" options={{ title: 'پنل فروشندگان', headerShown: false }} {...userChildren(SellerPanel)} />
                 <Tab.Screen initialParams={{ key: 'user' }} name="ResetSpecification" options={{ title: 'تغییر مشخصات', headerTitleStyle: { color: 'transparent' }, headerTitleAlign: 'center' }} {...userChildren(ResetSpecification)} />
                 <Tab.Screen initialParams={{ key: 'user' }} name="SendProposal" options={{ headerTitleStyle: { color: '#222', fontFamily: 'IRANSansWeb', fontSize: 15 }, title: 'ارسال انتقادات و پیشنهادات' }} {...userChildren(SendProposal)} />
@@ -172,41 +203,49 @@ const Mobile = () => {
                 <Tab.Screen initialParams={{ key: 'user' }} name="TicketBox" options={{ title: 'صندوق تیکت ها' }} {...userChildren(TicketBox)} />
                 <Tab.Screen initialParams={{ key: 'user' }} name="ShowLastOrder" options={{ title: 'نمایش آخرین سفارش' }} {...userChildren(ShowLastOrder)} />
                 <Tab.Screen initialParams={{ key: 'user' }} name="SavedProducts" options={{ title: 'ذخیره ها' }} {...userChildren(SavedProducts)} />
+                <Tab.Screen initialParams={{ key: 'user' }} name="ActiveOrder" {...clientChildren(ActiveOrder)} />
                 <Tab.Screen initialParams={{ key: 'user', view: 'true' }} name="FramePayment" options={{ title: 'پرداخت', headerShown: true }} {...userChildren(FramePayment)} />
-              </Tab.Group>
+              </Tab.Navigator>
+            }</Tab.Screen>
 
-              <Tab.Screen name="admin" options={{ headerShown: false }}>{() =>
-                <Tab.Navigator screenOptions={{ headerShown: false }}>
-                  <Tab.Screen initialParams={{ key: 'admin' }} name="PanelAdmin" options={{ title: 'پنل ادمین' }} {...adminChildren(PanelAdmin)} />
-                  <Tab.Screen initialParams={{ key: 'admin' }} name="CategoryTable" options={{ title: 'پنل ادمین' }} {...adminChildren(Table)} />
-                  <Tab.Screen initialParams={{ key: 'admin' }} name="ProductsTable" options={{ title: 'محصولات' }} {...adminChildren(ProductsTable)} />
-                  <Tab.Screen initialParams={{ key: 'admin', set: 'true' }} name="EditCategory" options={{ title: `ویرایش`, headerShown: true }} {...adminChildren(EditCategory)} />
-                  <Tab.Screen initialParams={{ key: 'admin', set: 'true' }} name="EditProduct" options={{ title: 'ویرایش محصول', headerShown: true }} {...adminChildren(EditProduct)} />
-                  <Tab.Screen initialParams={{ key: 'admin', set: 'true' }} name="SetOffer" options={{ title: 'تنظیم تخفیف', headerShown: true }} {...adminChildren(SetOffer)} />
-                  <Tab.Screen initialParams={{ key: 'admin', set: 'true' }} name="CreateCategory" options={{ title: 'ساخت دسته ی اغذیه', headerShown: true }} {...adminChildren(CreateCategory)} />
-                  <Tab.Screen initialParams={{ key: 'admin', set: 'true' }} name="CreateProduct" options={{ title: `ساخت محصول جدید`, headerShown: true }} {...adminChildren(CreateProduct)} />
-                  <Tab.Screen initialParams={{ key: 'admin' }} name="AddAdmin" options={{ title: 'اضافه کردن ادمین' }} {...adminChildren(AddAdmin)} />
-                  <Tab.Screen initialParams={{ key: 'admin' }} name="Notifee" options={{ title: 'ارسال نوتیفیکیشن' }} {...adminChildren(Notifee)} />
-                  <Tab.Screen initialParams={{ key: 'admin' }} name="ChangeMainAdmin" options={{ title: 'تعویض ادمین اصلی' }} {...adminChildren(ChangeMainAdmin)} />
-                  <Tab.Screen initialParams={{ key: 'admin' }} name="DeleteAdmin" options={{ title: 'حذف ادمین' }} {...adminChildren(DeleteAdmin)} />
-                  <Tab.Screen initialParams={{ key: 'admin' }} name="AllPayment" options={{ title: 'خرید های موفق و غیر موفق' }} {...adminChildren(AllPayment)} />
-                  <Tab.Screen initialParams={{ key: 'admin' }} name="Address" options={{ title: 'نمایش خرید کاربران' }} {...adminChildren(Address)} />
-                  <Tab.Screen initialParams={{ key: 'admin' }} name="QuitsForSeller" options={{ title: 'پرداخت به فروشندگان' }} {...adminChildren(QuitsForSeller)} />
-                  <Tab.Screen initialParams={{ key: 'admin' }} name="ListUnAvailable" options={{ title: 'لیست غذا های ناموجود' }} {...adminChildren(ListUnAvailable)} />
-                  <Tab.Screen initialParams={{ key: 'admin' }} name="GetProposal" options={{ title: 'صندوق انتقادلت و پیشنهادات' }} {...adminChildren(GetProposal)} />
-                  <Tab.Screen initialParams={{ key: 'admin', set: 'true' }} name="Sellers" options={{ title: 'فروشندگان' }} {...adminChildren(Sellers)} />
-                  <Tab.Screen initialParams={{ key: 'admin', set: 'true' }} name="AddSeller" options={{ title: 'افزودن فروشنده ی جدید', headerShown: true }} {...adminChildren(AddSeller)} />
-                  <Tab.Screen initialParams={{ key: 'admin' }} name="CreateSlider" options={{ title: 'ساخت اسلایدر' }} {...adminChildren(CreateSlider)} />
-                  <Tab.Screen initialParams={{ key: 'admin' }} name="AdminTicketBox" options={{ title: 'صندوق تیکت ها' }} {...adminChildren(AdminTicketBox)} />
-                  <Tab.Screen initialParams={{ key: 'admin', set: 'true' }} name="ShowLatLngOnMap" options={{ title: 'نمایش آدرس روی نقشه', headerShown: true }} {...adminChildren(ShowLatLngOnMap)} />
-                  <Tab.Screen initialParams={{ key: 'admin' }} name="SendPostPrice" options={{ title: 'تایین قیمت پست' }} {...adminChildren(SendPostPrice)} />
-                </Tab.Navigator>
-              }</Tab.Screen>
+            <Tab.Screen name="SocketIo" options={{ ...!allState.init.tokenValue.isAdmin ? {} : { tabBarButton: () => null }, tabBarBadge: allState.init.socketIoSeen ? true : null, headerShown: false, tabBarLabel: '', tabBarIcon: ({ color, size }) => (<Icon name="comments" color={color} size={size - 5} />) }} >{() =>
+              <Tab.Navigator screenListeners={{ focus: inputFocus }} >
+                <Tab.Screen initialParams={{ key: 'client' }} name="Socket" options={{ title: 'پرسش سوالات', headerTitleAlign: 'center' }} {...clientChildren(SocketIo)} />
+              </Tab.Navigator>
+            }</Tab.Screen>
 
-              <Tab.Screen name="NotFound" options={{ title: '404', headerShown: false }} {...clientChildren(_404)} />
-            </Tab.Navigator >
-          </Column>
-        }
+            <Tab.Screen name="Admin" options={{ ...allState.init.tokenValue.isAdmin ? {} : { tabBarButton: () => null }, headerShown: false, tabBarInactiveTintColor: '#acfa', tabBarActiveTintColor: '#7bf', tabBarActiveBackgroundColor: '#fafafa', tabBarInactiveBackgroundColor: '#fafafa', tabBarLabel: '', tabBarIcon: ({ color, size }) => (<M_icon name="admin-panel-settings" color={color} size={size} />) }}>{() =>
+              <Tab.Navigator initialRouteName="PanelAdmin" screenListeners={{ focus: inputFocus }} screenOptions={{ headerShown: false, headerTitleStyle: { color: 'transparent' }, headerTitleAlign: 'center', ...icon }} >
+                <Tab.Screen initialParams={{ key: 'admin' }} name="PanelAdmin" options={{ title: 'پنل ادمین' }} {...adminChildren(PanelAdmin)} />
+                <Tab.Screen initialParams={{ key: 'admin' }} name="CategoryTable" options={{ title: 'پنل ادمین' }} {...adminChildren(Table)} />
+                <Tab.Screen initialParams={{ key: 'admin' }} name="ProductsTable" options={{ title: 'محصولات' }} {...adminChildren(ProductsTable)} />
+                <Tab.Screen initialParams={{ key: 'admin', set: 'true' }} name="EditCategory" options={{ title: `ویرایش`, headerShown: true }} {...adminChildren(EditCategory)} />
+                <Tab.Screen initialParams={{ key: 'admin', set: 'true' }} name="EditProduct" options={{ title: 'ویرایش محصول', headerShown: true }} {...adminChildren(EditProduct)} />
+                <Tab.Screen initialParams={{ key: 'admin', set: 'true' }} name="SetOffer" options={{ title: 'تنظیم تخفیف', headerShown: true }} {...adminChildren(SetOffer)} />
+                <Tab.Screen initialParams={{ key: 'admin', set: 'true' }} name="CreateCategory" options={{ title: 'ساخت دسته ی اغذیه', headerShown: true }} {...adminChildren(CreateCategory)} />
+                <Tab.Screen initialParams={{ key: 'admin', set: 'true' }} name="CreateProduct" options={{ title: `ساخت محصول جدید`, headerShown: true }} {...adminChildren(CreateProduct)} />
+                <Tab.Screen initialParams={{ key: 'admin' }} name="AddAdmin" options={{ title: 'اضافه کردن ادمین' }} {...adminChildren(AddAdmin)} />
+                <Tab.Screen initialParams={{ key: 'admin' }} name="Notifee" options={{ title: 'ارسال نوتیفیکیشن' }} {...adminChildren(Notifee)} />
+                <Tab.Screen initialParams={{ key: 'admin' }} name="ChangeMainAdmin" options={{ title: 'تعویض ادمین اصلی' }} {...adminChildren(ChangeMainAdmin)} />
+                <Tab.Screen initialParams={{ key: 'admin' }} name="DeleteAdmin" options={{ title: 'حذف ادمین' }} {...adminChildren(DeleteAdmin)} />
+                <Tab.Screen initialParams={{ key: 'admin' }} name="AllPayment" options={{ title: 'خرید های موفق و غیر موفق' }} {...adminChildren(AllPayment)} />
+                <Tab.Screen initialParams={{ key: 'admin' }} name="Address" options={{ title: 'نمایش خرید کاربران' }} {...adminChildren(Address)} />
+                <Tab.Screen initialParams={{ key: 'admin' }} name="QuitsForSeller" options={{ title: 'پرداخت به فروشندگان' }} {...adminChildren(QuitsForSeller)} />
+                <Tab.Screen initialParams={{ key: 'admin' }} name="ListUnAvailable" options={{ title: 'لیست غذا های ناموجود' }} {...adminChildren(ListUnAvailable)} />
+                <Tab.Screen initialParams={{ key: 'admin' }} name="GetProposal" options={{ title: 'صندوق انتقادلت و پیشنهادات' }} {...adminChildren(GetProposal)} />
+                <Tab.Screen initialParams={{ key: 'admin', set: 'true' }} name="Sellers" options={{ title: 'فروشندگان' }} {...adminChildren(Sellers)} />
+                <Tab.Screen initialParams={{ key: 'admin', set: 'true' }} name="AddSeller" options={{ title: 'افزودن فروشنده ی جدید', headerShown: true }} {...adminChildren(AddSeller)} />
+                <Tab.Screen initialParams={{ key: 'admin' }} name="CreateSlider" options={{ title: 'ساخت اسلایدر' }} {...adminChildren(CreateSlider)} />
+                <Tab.Screen initialParams={{ key: 'admin' }} name="AdminTicketBox" options={{ title: 'صندوق تیکت ها' }} {...adminChildren(AdminTicketBox)} />
+                <Tab.Screen initialParams={{ key: 'admin', set: 'true' }} name="ShowLatLngOnMap" options={{ title: 'نمایش آدرس روی نقشه', headerShown: true }} {...adminChildren(ShowLatLngOnMap)} />
+                <Tab.Screen initialParams={{ key: 'admin' }} name="SendPostPrice" options={{ title: 'تایین قیمت پست' }} {...adminChildren(SendPostPrice)} />
+                <Tab.Screen initialParams={{ key: 'admin' }} name="AdminSocketIo" options={{ title: 'پرسش سوالات', headerShown: true }} {...clientChildren(AdminSocketIo)} />
+              </Tab.Navigator>
+            }</Tab.Screen>
+
+            <Tab.Screen name="NotFound" options={{ title: '404', headerShown: false, tabBarStyle: { display: 'none' }, tabBarButton: () => null }} {...clientChildren(_404)} />
+          </BottomTab.Navigator >
+        </Column>
       </contextStates.Provider>
     </>
   )
@@ -218,7 +257,7 @@ initialPropType(Products)
 initialPropType(ProductsOffers)
 initialPropType(ProductsPopulars)
 initialPropType(SingleProduct)
-initialPropType(BeforePayment)
+initialPropType(ProductBasket)
 initialPropType(Map)
 initialPropType(SetAddressForm)
 initialPropType(SetAddressInTehran)
@@ -242,6 +281,7 @@ initialPropType(GetTicket)
 initialPropType(TicketBox)
 initialPropType(ShowLastOrder)
 initialPropType(SavedProducts)
+initialPropType(ActiveOrder)
 initialPropType(FramePayment)
 
 initialPropType(Table)
@@ -267,43 +307,65 @@ initialPropType(CreateSlider)
 initialPropType(AdminTicketBox)
 initialPropType(ShowLatLngOnMap)
 initialPropType(SendPostPrice)
+initialPropType(AdminSocketIo)
 
 
 const linking = {
+  // prefixes: ['localhost:3000://', 'http://localhost:3000'],
   config: {
     screens: {
-      Home: '/:key',
-      Products: '/products/:id',
-      ProductsOffers: '/productsoffers',
-      ProductsPopulars: '/productspopulars',
-      SingleProduct: '/singleproduct/:id',
-      BeforePayment: '/beforepayment',
-      SetAddressForm: '/setaddressform',
-      Map: '/map',
-      SocketIo: '/socketio',
-      SetAddressInTehran: '/setaddressintehran',
-      CreateComment: '/createcomment',
-      EditComment: '/editcomment',
 
-      Register: '/register',
-      GetCode: '/getCode',
-      Login: '/login',
-      ForgetPass: '/forgetpass',
-      ResetPass: '/resetpass',
-      ResetSpecification: '/resetspecification',
-      Logout: '/logout',
-      SendProposal: '/sendproposal',
-      Profile: '/profile',
-      SellerPanel: '/sellerpanel',
-      SendTicket: '/sendticket',
-      GetTicket: '/getticket',
-      TicketBox: '/ticketbox',
-      ShowLastOrder: '/showlastorder',
-      SavedProducts: '/savedproducts',
-      Rules: '/rules',
-      FramePayment: '/framepayment',
+      Client: {
+        screens: {
+          Home: '/:key',
+          ProductsOffers: '/productsoffers',
+          ProductsPopulars: '/productspopulars',
+          Products: '/products/:id',
+          SingleProduct: '/singleproduct/:id',
+          CreateComment: '/createcomment',
+          EditComment: '/editcomment',
+        }
+      },
 
-      admin: {
+      BeforePayment: {
+        screens: {
+          ProductBasket: '/productbasket',
+          SetAddressForm: '/setaddressform',
+          Map: '/map',
+          SetAddressInTehran: '/setaddressintehran',
+        }
+      },
+
+      SocketIo: {
+        screens: {
+          Socket: '/socket',
+        }
+      },
+
+      User: {
+        screens: {
+          Register: '/register',
+          GetCode: '/getCode',
+          Login: '/login',
+          ForgetPass: '/forgetpass',
+          ResetPass: '/resetpass',
+          ResetSpecification: '/resetspecification',
+          Logout: '/logout',
+          SendProposal: '/sendproposal',
+          Profile: '/profile',
+          SellerPanel: '/sellerpanel',
+          SendTicket: '/sendticket',
+          GetTicket: '/getticket',
+          TicketBox: '/ticketbox',
+          ShowLastOrder: '/showlastorder',
+          SavedProducts: '/savedproducts',
+          ActiveOrder: '/activeorder',
+          Rules: '/rules',
+          FramePayment: '/framepayment',
+        }
+      },
+
+      Admin: {
         screens: {
           PanelAdmin: '/paneladmin',
           AdminTicketBox: '/adminTicketBox',
@@ -328,8 +390,10 @@ const linking = {
           CreateProduct: '/createproduct/:id',
           ShowLatLngOnMap: '/showlatlngonmap',
           SendPostPrice: '/sendpostprice',
+          AdminSocketIo: '/adminsocketio',
         }
       },
+
       NotFound: '*'
     },
   },
@@ -340,8 +404,9 @@ let deferredInstall
 let _App
 if (Platform.OS !== 'web') {
   _App = () => {
+    // const scheme = useColorScheme();
     return (
-      <NavigationContainer>
+      <NavigationContainer /* theme={scheme === 'dark' ? DarkTheme : DefaultTheme} */>
         <Mobile />
       </NavigationContainer>
     )
@@ -349,6 +414,9 @@ if (Platform.OS !== 'web') {
 }
 else {
   _App = () => {
+
+    const { height } = useWindowDimensions();
+
     useEffect(() => {
       window.addEventListener('beforeinstallprompt', (ev) => {
         ev.preventDefault();
@@ -360,14 +428,14 @@ else {
       if (cancelInstalled < 1 && deferredInstall) {
         deferredInstall.prompt();
         deferredInstall.userChoice.then(async (choice) => {
-          if (choice.outcome == 'accepted') { console.log('installed'); }
+          if (choice.outcome == 'accepted') { await AsyncStorage.setItem('cancelInstalled', String(Number(cancelInstalled) + 1)); console.log('installed'); }
           else { await AsyncStorage.setItem('cancelInstalled', String(Number(cancelInstalled) + 1)); }
         });
       }
     }
     return (
       <NavigationContainer linking={linking} >
-        <Column onStartShouldSetResponderCapture={installStatus} style={{ width: '100%', height: '100%' }} >
+        <Column onStartShouldSetResponderCapture={installStatus} style={{ width: '100%', height }} >
           <Mobile />
         </Column>
       </NavigationContainer>
@@ -376,26 +444,33 @@ else {
 }
 
 
-
+let showToast
 let App = () => {
 
   const netInfo = useNetInfo()
+  const [splash, setsplash] = useState(false)
+  useLayoutEffect(() => { netInfo.isConnected && setsplash(true) }, [netInfo])
+  const allState = states()
+  const toast = new Toast(allState.client)
+  var toastNetworkError = () => { toast.error('خطا ی شبکه', 'اتصال اینترنتتان را برسی کنید') }
 
   return (
-    <ErrorBoundary fallback={
+    splash ? <ErrorBoundary fallback={
       <Column style={{ width: '70%', marginTop: 20, padding: 12, display: 'flex', alignSelf: 'center', alignItems: 'center', justifyContent: 'center', borderBottomWidth: 1 }} >
         <P style={{ fontFamily: 'IRANSansWeb', fontWeight: 'bold' }} >اتفاق غیر منتظره ای رخ داد</P>
-        <Press onClick={Platform.OS === 'web' ? () => { location.href = myhost } : reload} style={{ marginTop: 15, width: 95, height: 37, borderWidth: 1, borderRadius: 4, borderColor: '#08e', justifyContent: 'center', alignItems: 'center' }} >
+        <Press onClick={reload} style={{ marginTop: 15, width: 95, height: 37, borderWidth: 1, borderRadius: 4, borderColor: '#08e', justifyContent: 'center', alignItems: 'center' }} >
           <P style={{ fontFamily: 'IRANSansWeb', color: '#08e', fontSize: 12 }} >بارگذاری مجدد</P>
         </Press>
         {netInfo.isConnected === false ? <P fs={13} mt={12} color='red' style={{ fontFamily: 'IRANSansWeb' }} >اتصال اینترنتتان را چک کنید</P> : <></>}
       </Column>} >
       <_App />
     </ErrorBoundary>
+      :
+      <Column onLayout={()=>{if(!showToast){toastNetworkError(); showToast = true}}} pos='absolute' t={0} l={0} r={0} b={0} z={111111} h={'100%'} w={'100%'} bgcolor='#fff' pb={Platform.OS === 'ios' ? 10 : 1} f={1} maxh={allState.init.height} >
+        <Img src={allState.init.logoUrl} f={1} style={{ resizeMode: 'stretch' }} />
+        <ToastProvider {...allState.init} />
+      </Column>
   )
 }
 
 export default App;
-
-
-
