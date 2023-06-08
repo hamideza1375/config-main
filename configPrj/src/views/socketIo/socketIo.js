@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, FlatList, Platform, Animated, SafeAreaView } from 'react-native'
+import { View, FlatList, Platform, Animated, SafeAreaView, BackHandler } from 'react-native'
 import { useFocusEffect } from '@react-navigation/native';
 import { A_icon, Badge, Column, Img, Modal, P, Press, Row } from '../../other/Components/Html';
 import Video from '../../other/Components/other/Video';
@@ -11,9 +11,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from 'jwt-decode'
 import moment from 'moment-jalaali';
 import Icon from 'react-native-vector-icons/dist/FontAwesome5';
-import _useEffect from '../../controllers/_initial';
 import { Keyboard } from 'react-native';
 import download from '../../other/utils/download';
+import changeNavigationBarColor from 'react-native-navigation-bar-color';
+
 let adminId
 
 const AdminSocketIo = (p) => {
@@ -31,6 +32,7 @@ const AdminSocketIo = (p) => {
   const tokenValue = useRef({})
   const tokenSocket = useRef()
   const socketTocken = useRef()
+  const flatlistRef = useRef()
 
 
 
@@ -53,7 +55,6 @@ const AdminSocketIo = (p) => {
   };
 
 
-
   const socket = useRef(SocketIOClient.connect(localhost, {
     transports: ["websocket"],
     auth: {
@@ -61,13 +62,70 @@ const AdminSocketIo = (p) => {
     }
   },))
 
+  // const setNavigationColor = color => { changeNavigationBarColor(color); };
+  // const hideNavigation = () => { hideNavigationBar(); };
+  // const showNavigation = () => { showNavigationBar(); };
+  // const testSetTranslucent = () => { changeNavigationBarColor('translucent', false); };
+  // const testSetTransparent = () => { changeNavigationBarColor('transparent', true); };
 
+  const [showChange, setshowChange] = useState(false)
 
   useEffect(() => {
-    if (videoUri) p.navigation.setOptions({ headerLeft: () => <Icon style={{ paddingRight: 10, color: '#555' }} name='arrow-left' size={23} onPress={() => setvideoUri('')} /> })
+    if (Platform.OS === 'android') {
+      p.navigation.getParent()?.setOptions({
+        tabBarStyle: {
+          display: (videoUri) ? "none" : "flex"
+        }
+      })
+
+      if(showChange){ (videoUri) ? changeNavigationBarColor('black') : changeNavigationBarColor('white')}
+    }
   }, [to, videoUri])
 
 
+
+  
+  useFocusEffect(useCallback(() => {
+    if (Platform.OS === 'android') {
+      p.navigation.getParent()?.setOptions({
+        tabBarStyle: {
+          display: (videoUri) ? "none" : "flex"
+        }
+      })
+      if (showChange) {
+        if (videoUri) p.navigation.setOptions({
+          title: '',
+           headerStyle: { backgroundColor: '#000' }, statusBarHidden: true,
+          headerLeft: () => <Icon style={{ paddingRight: 10, color: '#555' }} name='arrow-left' size={23} onPress={() => setvideoUri('')} />
+        })
+        else p.navigation.setOptions({
+          title: 'پرسش سوالات',
+          headerStyle: { backgroundColor: '#fff' }, statusBarHidden: false,
+          headerLeft: () => { }
+        })
+      }
+      setshowChange(true)
+    }
+    else
+      if (videoUri) p.navigation.setOptions({
+        headerLeft: () => <Icon style={{ paddingRight: 10, color: '#555' }} name='arrow-left' size={23} onPress={() => setvideoUri('')} />
+      })
+      else p.navigation.setOptions({ headerLeft: () => { } })
+    return () => {
+      if (Platform.OS === 'android')
+        p.navigation.setOptions({
+          headerStyle: { backgroundColor: '#fff' }, statusBarHidden: false,
+        })
+    }
+  }, [to, videoUri]))
+
+
+
+  useFocusEffect(useCallback(() => {
+    const backHandler = Platform.OS === 'android' && videoUri && BackHandler.addEventListener('hardwareBackPress', () => { setvideoUri('');  setTimeout(() => { return p.navigation.navigate('SocketIo') }, 100) });
+    (Platform.OS === 'android' && backHandler && !videoUri) && backHandler.remove()
+    return () => (Platform.OS === 'android' && backHandler) && backHandler.remove()
+  }, [videoUri]))
 
 
   useFocusEffect(useCallback(() => {
@@ -94,7 +152,7 @@ const AdminSocketIo = (p) => {
 
 
     socket.current.on("mongoMsg", async (messages) => {
-        messages && setPvChatMessage([...messages, { userId: tokenSocket.current, message: 'چطوری میتونم کمکتون کنم؟', _id: 'a1' }])
+      messages && setPvChatMessage([...messages, { userId: tokenSocket.current, message: 'چطوری میتونم کمکتون کنم؟', _id: 'a1' }])
     })
 
 
@@ -123,19 +181,25 @@ const AdminSocketIo = (p) => {
 
 
 
+  // useEffect(() => {
+  //   AsyncStorage.setItem('socketDate', JSON.stringify(new Date().getTime())).then(() => { })
+  //   return () => {
+  //     setPvChatMessage([])
+  //     settitleMessage([])
+  //     socket.current.emit("delRemove")
+  //   }
+  // }, [])
+
   useFocusEffect(useCallback(() => {
     AsyncStorage.setItem('socketDate', JSON.stringify(new Date().getTime())).then(() => { })
     return () => {
-      setPvChatMessage([])
-      settitleMessage([])
-      p.setsocketIoSeen(false)
       AsyncStorage.setItem('socketDate', JSON.stringify(new Date().getTime())).then(() => { })
-      socket.current.emit("delRemove")
+      p.setsocketIoSeen(false)
     }
   }, []));
 
 
-  useFocusEffect(useCallback(() => {
+  useEffect(() => {
     var socketTocken
     (async () => {
       socketTocken = await AsyncStorage.getItem('socketTocken')
@@ -150,7 +214,7 @@ const AdminSocketIo = (p) => {
         socket.current.emit("online", { user: tokenValue.current, userId: socketTocken });
       }
     })()
-  }, []))
+  }, [])
 
 
   const handlePvChat = () => {
@@ -186,6 +250,7 @@ const AdminSocketIo = (p) => {
       {(pvChatMessage.length || titleMessage.length) ?
         <View onLayout={() => { setto('1') }} style={{ flex: 1 }} >
           <FlatList
+            ref={flatlistRef}
             inverted
             keyExtractor={(data, i) => data._id}
             data={pvChatMessage}
@@ -233,12 +298,12 @@ const AdminSocketIo = (p) => {
 
 
           <Column mt='auto' >
-            <InputBottom handleKeypress={handleKeypress} handlePvChat={handlePvChat} setpvMessage={setpvMessage} pvMessage={pvMessage} socket={socket} tokenSocket={tokenSocket} tokenValue={tokenValue} to={to} ></InputBottom>
+            <InputBottom onClick={() => flatlistRef.current.scrollToOffset({ offset: 0 })} flatlistRef={flatlistRef} handleKeypress={handleKeypress} handlePvChat={handlePvChat} setpvMessage={setpvMessage} pvMessage={pvMessage} socket={socket} tokenSocket={tokenSocket} tokenValue={tokenValue} to={to} ></InputBottom>
           </Column>
 
 
           {Platform.OS === 'android' && videoUri ?
-            <Column show={showVideo} setshow={setshowVideo} style={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }} >
+            <Column style={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }} >
               {videoUri ? <Video source={{ uri: videoUri }} controls paused={false} muted={false} style={{ height: '100%', width: '100%', borderRadius: 4, alignSelf: 'center' }} /> : <></>}
             </Column>
             :

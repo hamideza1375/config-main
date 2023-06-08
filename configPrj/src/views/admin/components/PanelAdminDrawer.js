@@ -23,7 +23,7 @@ const PanelAdminDrawer = (p) => {
           </Column>
           <Column as='center' pv={15} ph={10} w='100%' border={[1, '#047']}>
             <Press fd='row' onClick={() => p.navigation.navigate('AdminTicketBox')} ><Py color={pageName('AdminTicketBox')} >صندوق تیکت ها</Py>{p.ticketSeen?<Badge left={5} top={.5} />:<></>}</Press>
-            <Press mt={10} fd='row' onClick={() => p.navigation.navigate('SocketIo')} ><Py color={pageName('SocketIo')} >صندوق پرسش و پاسخ همزمان</Py>{p.socketIoSeen?<Badge left={5} top={.5} />:<></>}</Press>
+            <Press mt={10} fd='row' onClick={() => p.navigation.navigate('AdminSocketIo')} ><Py color={pageName('AdminSocketIo')} >صندوق پرسش و پاسخ همزمان</Py>{p.socketIoSeen?<Badge left={5} top={.5} />:<></>}</Press>
             <Press mt={10} onClick={() => p.navigation.navigate('GetProposal')} ><Py color={pageName('GetProposal')} >صندوق انتقادات و پیشنهادات</Py></Press>
           </Column>
           <Column as='center' pv={15} ph={10} w='100%' border={[1, '#047']}>
@@ -40,9 +40,9 @@ const PanelAdminDrawer = (p) => {
             <Press mt={10} onClick={() => p.navigation.navigate('CreateSlider')} ><Py color={pageName('CreateSlider')} >ساخت اسلایدر</Py></Press>
             <Press mt={10} onClick={() => p.navigation.navigate('SendPostPrice')} ><Py color={pageName('SendPostPrice')} >تایین قیمت پست</Py></Press>
           </Column>
-          <Column as='center' pv={15} ph={10} w='100%' border={[1, '#047']}>
+          {/* <Column as='center' pv={15} ph={10} w='100%' border={[1, '#047']}>
             <Press onClick={() => p.navigation.navigate('Profile')} ><Py color={pageName('Profile')} >حساب کاربری</Py></Press>
-          </Column>
+          </Column> */}
         </Column>
       </Scroll>
   )

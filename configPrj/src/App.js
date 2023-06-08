@@ -80,6 +80,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import AdminGetTicket from "./views/admin/AdminGetTicket";
 
 
 rtl()
@@ -118,17 +119,17 @@ const Mobile = () => {
 
 
   const inputFocus = () => {
-    if (Platform.OS === 'web')
-      if (navigator?.userAgent?.match('Mobile') == 'Mobile') {
-        setTimeout(() => {
-          let inp = document.getElementsByTagName('input')
-          for (let i = 0; i <= inp.length; i++) {
-            inp[i]?.addEventListener('focus', () => { setshowTab(false) })
-            inp[i]?.addEventListener('blur', () => { setshowTab(true) })
-          }
-        }, 1000);
+    // if (Platform.OS === 'web')
+    //   if (navigator?.userAgent?.match('Mobile') == 'Mobile') {
+    //     setTimeout(() => {
+    //       let inp = document.getElementsByTagName('input')
+    //       for (let i = 0; i <= inp.length; i++) {
+    //         inp[i]?.addEventListener('focus', () => { setshowTab(false) })
+    //         inp[i]?.addEventListener('blur', () => { setshowTab(true) })
+    //       }
+    //     }, 1000);
 
-      }
+    //   }
   }
 
   useEffect(() => {
@@ -143,7 +144,6 @@ const Mobile = () => {
   })
 
 
-  //   if (navigation?.getState()?.routes[0]?.state?.index === 1 || navigation?.getState()?.routes[0]?.state?.index === 0) 
 
   return (
     <>
@@ -239,7 +239,8 @@ const Mobile = () => {
                 <Tab.Screen initialParams={{ key: 'admin' }} name="AdminTicketBox" options={{ title: 'صندوق تیکت ها' }} {...adminChildren(AdminTicketBox)} />
                 <Tab.Screen initialParams={{ key: 'admin', set: 'true' }} name="ShowLatLngOnMap" options={{ title: 'نمایش آدرس روی نقشه', headerShown: true }} {...adminChildren(ShowLatLngOnMap)} />
                 <Tab.Screen initialParams={{ key: 'admin' }} name="SendPostPrice" options={{ title: 'تایین قیمت پست' }} {...adminChildren(SendPostPrice)} />
-                <Tab.Screen initialParams={{ key: 'admin' }} name="AdminSocketIo" options={{ title: 'پرسش سوالات', headerShown: true }} {...clientChildren(AdminSocketIo)} />
+                <Tab.Screen initialParams={{ key: 'admin' }} name="AdminSocketIo" options={{ title: '', headerShown: true }} {...clientChildren(AdminSocketIo)} />
+                <Tab.Screen initialParams={{ key: 'user', view: 'true' }} name="AdminGetTicket" options={{ title: 'تیکت', headerShown: true }} {...userChildren(AdminGetTicket)} />
               </Tab.Navigator>
             }</Tab.Screen>
 
@@ -308,6 +309,7 @@ initialPropType(AdminTicketBox)
 initialPropType(ShowLatLngOnMap)
 initialPropType(SendPostPrice)
 initialPropType(AdminSocketIo)
+initialPropType(AdminGetTicket)
 
 
 const linking = {
@@ -391,6 +393,7 @@ const linking = {
           ShowLatLngOnMap: '/showlatlngonmap',
           SendPostPrice: '/sendpostprice',
           AdminSocketIo: '/adminsocketio',
+          AdminGetTicket: '/admingetticket',
         }
       },
 

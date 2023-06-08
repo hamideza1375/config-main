@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Animated, KeyboardAvoidingView, Text } from "react-native";
 import { Input } from "./FormComponent";
 import Swiper from '../components/Swiper'
@@ -42,6 +42,18 @@ export default function ({ setscrollEnabled, textId, $input, initialHeight, icon
   })
 
 
+  const [inputState, setinputState] = useState('')
+  const [change, setchange] = useState(false)
+
+
+  useEffect(() => {
+    setinputState(String(state))
+  }, [change])
+
+  useEffect(() => {
+    setTimeout(() => { !inputState.length && setchange(true) }, 700);
+    setTimeout(() => { !inputState.length && setchange(false) }, 1400);
+  }, [])
 
 
 
@@ -59,6 +71,8 @@ export default function ({ setscrollEnabled, textId, $input, initialHeight, icon
           {plackTextTop && <Py fw='100' style={[styles.textinput, { marginTop: 5 }, (multiline && !initialHeight) && { marginVertical: 5 }]} >{p}</Py>}
           <Animated.View style={[styles.animatedBorder, getBlur && !yub && { borderWidth: 1.2, borderColor: iterPlt, transform: [{ translateX: fadeAnim }] }, (multiline && !initialHeight) && { height: '101%', minHeight: '101%', marginTop: -3 }]} >
             <Input
+              // onChange={()=>{ setState($input.id(textId).value)}}
+              onLayout={() => { }}
               onStartShouldSetResponder={() => setscrollEnabled(true)} onStartShouldSetResponderCapture={() => setscrollEnabled(true)}
               $input={$input}
               textId={textId}
@@ -69,9 +83,9 @@ export default function ({ setscrollEnabled, textId, $input, initialHeight, icon
               iconSize={iconSize}
               m_icon={m_icon}
               placeholder={p2 ? p2 : p}
-              defaultValue={String(state)}
-              onChangeText={(text) => { if (int && lastInterval) { clearInterval(int) }; int = setTimeout(() => { setState(text); if (lastInterval === false || String(state).length < 1) { setTimeout(() => { lastInterval = true }, 1000) }; }, 350); }}
-              onBlur={() => { setTimeout(() => { setBlur(true); !yub && fadeOut() }, 350); }}
+              value={inputState}
+              onChangeText={(text) => { if (!state.length) setState(text); setinputState(text); (int) && clearInterval(int); int = setTimeout(() => { setState(text) }, 2000); }}
+              onBlur={() => { (int) && clearInterval(int); (inputState !== state) && setState(inputState); setTimeout(() => { setBlur(true); !yub && fadeOut() }, 2500); }}
               style={[styles.input, (multiline && !initialHeight) && { height: 115, minHeight: 115 }]}
               iconPress={iconPress}
               secureTextEntry={secureTextEntry}
@@ -89,5 +103,3 @@ export default function ({ setscrollEnabled, textId, $input, initialHeight, icon
 
   )
 }
-
-
