@@ -94,10 +94,14 @@ export function initial() {
   const timerInterwal = useRef()
   const [goToUser, setgoToUser] = useState(true)
   const [homeScreen, sethomeScreen] = useState(false)
-
+  const [playMusic, setplayMusic] = useState(false)
+  const [changeRefresh, setchangeRefresh] = useState(false)
+  
 
   this.all = {
+    changeRefresh, setchangeRefresh,
     homeScreen, sethomeScreen,
+    playMusic, setplayMusic,
     timerInterwal,
     goToUser, setgoToUser,
     // logoUrl: Platform.OS === 'web' ? '/logo.png' : require('../other/assets/images/logo.png'),

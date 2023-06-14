@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Animated as _Animated, StyleSheet as _StyleSheet, View, Text, Image, ScrollView, TouchableOpacity, Platform, FlatList as _FlatList, VirtualizedList, Pressable, ImageBackground, Dimensions } from 'react-native';
 import _icon from 'react-native-vector-icons/dist/FontAwesome5';
 import Aicon from 'react-native-vector-icons/dist/AntDesign';
@@ -34,7 +34,12 @@ export { default as ProgressChart } from './chart/ProgressChart'
 export { Textarea, Input, CheckBox, CheckBoxRadius } from './formComponent/FormComponent'
 // import { Input as _Input } from './formComponent/FormComponent'
 
+// import FastImage from './components/FastImage'
 import setStyleRef from './classToStyle/setClassToStyle';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import _useEffect from '../../controllers/_initial';
+import { useRoute } from '@react-navigation/native';
+import { useNetInfo } from '@react-native-community/netinfo';
 
 
 
@@ -83,29 +88,12 @@ export const ComponentForScroll = React.forwardRef((props, ref) => {
     onClick={() => { }}
     src={null}
     source={uri ? uri : props.source}
-    contentContainerStyle={[{justifyContent: jc, alignItems: ai},props.ccStyle, props.contentContainerStyle, Platform.OS !== 'web' && props.containClass]}
+    contentContainerStyle={[{ justifyContent: jc, alignItems: ai }, props.ccStyle, props.contentContainerStyle, Platform.OS !== 'web' && props.containClass]}
     imageStyle={[props.imageStyle, Platform.OS !== 'web' && props.containClass]}
     style={[
 
       Platform.select({
-        web:{
-            flexWrap: fw, elevation: el,
-            shadowRadius: sh.r, shadowOpacity: sh.o, shadowColor: sh.c, shadowOffset: sh.of,
-            transform: [{ scale }, { rotate: rotate + 'deg' }],
-            borderTopWidth: btw, borderRadius: br,
-            borderBottomWidth: bbw, borderLeftWidth: blw, borderRightWidth: brw,
-            minWidth: minw, maxWidth: maxw, minHeight: minh, maxHeight: maxh,
-            opacity: opc,
-            position: pos, zIndex: z, top: t, bottom: b, right: r, left: l,
-            flexGrow: fg, flex: f, flexDirection: fd,
-            alignSelf: as, padding: p, paddingBottom: pb, paddingTop: pt,
-            paddingRight: pr, paddingLeft: pl, paddingHorizontal: ph, paddingVertical: pv,
-            marginVertical: mv, margin: m, marginTop: mt, marginBottom: mb,
-            marginLeft: ml, marginRight: mr, marginHorizontal: mh,
-            backgroundColor: bgcolor, borderWidth: border[0], borderColor: border[1],
-            height: h, width: w, 
-        },
-        native:{
+        web: {
           flexWrap: fw, elevation: el,
           shadowRadius: sh.r, shadowOpacity: sh.o, shadowColor: sh.c, shadowOffset: sh.of,
           transform: [{ scale }, { rotate: rotate + 'deg' }],
@@ -120,14 +108,31 @@ export const ComponentForScroll = React.forwardRef((props, ref) => {
           marginVertical: mv, margin: m, marginTop: mt, marginBottom: mb,
           marginLeft: ml, marginRight: mr, marginHorizontal: mh,
           backgroundColor: bgcolor, borderWidth: border[0], borderColor: border[1],
-          height: h, width: w, 
+          height: h, width: w,
+        },
+        native: {
+          flexWrap: fw, elevation: el,
+          shadowRadius: sh.r, shadowOpacity: sh.o, shadowColor: sh.c, shadowOffset: sh.of,
+          transform: [{ scale }, { rotate: rotate + 'deg' }],
+          borderTopWidth: btw, borderRadius: br,
+          borderBottomWidth: bbw, borderLeftWidth: blw, borderRightWidth: brw,
+          minWidth: minw, maxWidth: maxw, minHeight: minh, maxHeight: maxh,
+          opacity: opc,
+          position: pos, zIndex: z, top: t, bottom: b, right: r, left: l,
+          flexGrow: fg, flex: f, flexDirection: fd,
+          alignSelf: as, padding: p, paddingBottom: pb, paddingTop: pt,
+          paddingRight: pr, paddingLeft: pl, paddingHorizontal: ph, paddingVertical: pv,
+          marginVertical: mv, margin: m, marginTop: mt, marginBottom: mb,
+          marginLeft: ml, marginRight: mr, marginHorizontal: mh,
+          backgroundColor: bgcolor, borderWidth: border[0], borderColor: border[1],
+          height: h, width: w,
         }
       })
 
       ,
       stl, stl2, col, orientation
     ]}
-    
+
     ref={(e) => { setStyleRef(props, e, ref, setinnerHTML, flatlist, seturi); }}
   >{innerHTML ? ((typeof innerHTML === 'string') ? <Text onPress={props.onClick}>{innerHTML}</Text> : innerHTML) : (typeof props.children === 'string') ? <Text onPress={props.onClick}>{props.children}</Text> : props.children}</Component>;
 });
@@ -222,7 +227,7 @@ export const ComponentImage = React.forwardRef((props, ref) => {
       ,
       stl, stl2, col, orientation
     ]}
-    
+
     ref={(e) => { setStyleRef(props, e, ref, setinnerHTML, flatlist, seturi); }}
   >{innerHTML ? ((typeof innerHTML === 'string') ? <Text onPress={props.onClick}>{innerHTML}</Text> : innerHTML) : (typeof props.children === 'string') ? <Text onPress={props.onClick}>{props.children}</Text> : props.children}</Component>;
 });
@@ -318,7 +323,7 @@ export const Component = React.forwardRef((props, ref) => {
       ,
       stl, stl2, col, orientation
     ]}
-    
+
     ref={(e) => { setStyleRef(props, e, ref, setinnerHTML, flatlist, seturi); }}
   >{innerHTML ? ((typeof innerHTML === 'string') ? <Text onPress={props.onClick}>{innerHTML}</Text> : innerHTML) : (typeof props.children === 'string') ? <Text onPress={props.onClick}>{props.children}</Text> : props.children}</Component>;
 });
@@ -360,10 +365,10 @@ export const _text = React.forwardRef((props, ref) => {
   return <Text
     {...props}
     style={[
-      
+
       Platform.select({
         web: {
-          overflow:'hidden',
+          overflow: 'hidden',
           textShadowRadius: tsh.r, textShadowColor: tsh.c, textShadowOffset: tsh.of,
           borderBottomColor: bbc, borderTopColor: btc,
           borderLeftColor: blc, borderRightColor: brc, borderTopWidth: btw,
@@ -380,7 +385,7 @@ export const _text = React.forwardRef((props, ref) => {
           height: h, width: w, fontFamily: ff, fontSize: fs, fontWeight: fw, color,
         },
         android: {
-          overflow:'hidden',
+          overflow: 'hidden',
           textShadowRadius: tsh.r, textShadowColor: tsh.c, textShadowOffset: tsh.of,
           borderBottomColor: bbc, borderTopColor: btc,
           borderLeftColor: blc, borderRightColor: brc, borderTopWidth: btw,
@@ -388,7 +393,7 @@ export const _text = React.forwardRef((props, ref) => {
           minWidth: minw, maxWidth: maxw, minHeight: minh, maxHeight: maxh,
           opacity: opc,
           position: pos, zIndex: z, top: t, bottom: b, right: r, left: l,
-          textAlign:ta === 'left' ? 'right' :( ta === 'right' ? 'left' : ta) , flexGrow: fg, flex: f,
+          textAlign: ta === 'left' ? 'right' : (ta === 'right' ? 'left' : ta), flexGrow: fg, flex: f,
           alignSelf: as, padding: p, paddingBottom: pb, paddingTop: pt,
           paddingRight: pl, paddingLeft: pr, paddingHorizontal: ph, paddingVertical: pv,
           marginVertical: mv, margin: m, marginTop: mt, marginBottom: mb,
@@ -397,7 +402,7 @@ export const _text = React.forwardRef((props, ref) => {
           height: h, width: w, fontFamily: ff, fontSize: fs, fontWeight: fw, color,
         },
         ios: {
-          overflow:'hidden',
+          overflow: 'hidden',
           textShadowRadius: tsh.r, textShadowColor: tsh.c, textShadowOffset: tsh.of,
           borderBottomColor: bbc, borderTopColor: btc,
           borderLeftColor: blc, borderRightColor: brc, borderTopWidth: btw,
@@ -405,7 +410,7 @@ export const _text = React.forwardRef((props, ref) => {
           minWidth: minw, maxWidth: maxw, minHeight: minh, maxHeight: maxh,
           opacity: opc,
           position: pos, zIndex: z, top: t, bottom: b, right: r, left: l,
-          textAlign:ta === 'left' ? 'right' :( ta === 'right' ? 'left' : ta), flexGrow: fg, flex: f,
+          textAlign: ta === 'left' ? 'right' : (ta === 'right' ? 'left' : ta), flexGrow: fg, flex: f,
           alignSelf: as, padding: p, paddingBottom: pb, paddingTop: pt,
           paddingRight: pr, paddingLeft: pl, paddingHorizontal: ph, paddingVertical: pv,
           marginVertical: mv, margin: m, marginTop: mt, marginBottom: mb,
@@ -415,7 +420,7 @@ export const _text = React.forwardRef((props, ref) => {
         }
       })
 
-     ,
+      ,
       stl, col, orientation
     ]}
     onPress={props.onClick} ref={(e) => {
@@ -437,7 +442,7 @@ export const Container = (props) => <Component onStartShouldSetResponder={props.
 export const ContainerFix = (props) => <Component onStartShouldSetResponder={props.onClick} initalClass={Platform.OS === 'web' ? s.ContainerWeb : s.Container} {...props} Component={View} />
 
 export const Container2 = (props) => <Component onStartShouldSetResponder={props.onClick} initalClass={Platform.OS === 'web' ? s.ContainerWeb2 : s.Container} {...props} Component={View} />
- 
+
 export const ContainerNavigation = (props) => <Component onStartShouldSetResponder={props.onClick} initalClass={Platform.OS === 'web' ? s.ContainerNavigation : s.Container} {...props} Component={View} />
 
 export const ContainerTab = (props) => <Component onStartShouldSetResponder={props.onClick} initalClass={s.Container} {...props} Component={View} />
@@ -479,13 +484,15 @@ export const PressScrollView = (props) =>
 
 export const ImgBackground = (props) => <Component source={props.src} {...props} Component={ImageBackground} />
 
-export const Img = (props) => <ComponentImage style={[props.style]} source={props.src} {...props} Component={Image} />
+export const Img = (props) => <ComponentImage style={[props.style]} source={!props.src.uri ? props.src : { ...props.src, ...{ cache: 'force-cache' } }} {...props} Component={Image} />
 
-export const Scroll = (props) => <ComponentForScroll onStartShouldSetResponder={props.onClick} {...props} style={[{flexWrap:'nowrap'}, props.style]} Component={ScrollView} />
+// export const FastImg = React.forwardRef((props, ref) => <FastImage ref={ref} {...props} />)
 
-export const ScrollHorizontal = (props) => <ComponentForScroll onStartShouldSetResponder={props.onClick} {...props} style={[{flexWrap:'wrap'}, props.style]} horizontal={true} Component={ScrollView} />
+export const Scroll = (props) => <ComponentForScroll onStartShouldSetResponder={props.onClick} {...props} style={[{ flexWrap: 'nowrap' }, props.style]} Component={ScrollView} />
 
-export const FlatList = ({ pageLimit, loading = true, column1, column2, column3, column4, column5, column6, renderItem, numColumns, data, keyExtractor, ...props }) => {
+export const ScrollHorizontal = (props) => <ComponentForScroll onStartShouldSetResponder={props.onClick} {...props} style={[{ flexWrap: 'wrap' }, props.style]} horizontal={true} Component={ScrollView} />
+
+export const FlatList = ({ cacheId, pageLimit, loading = true, column1, column2, column3, column4, column5, column6, renderItem, numColumns, data, keyExtractor, ...props }) => {
 
   const width = Dimensions.get('window').width
   const [index, setindex] = useState(0)
@@ -503,22 +510,43 @@ export const FlatList = ({ pageLimit, loading = true, column1, column2, column3,
   const [page, setpage] = useState(1)
   const [currentPage, setcurrentPage] = useState(1)
   const [current, setcurrent] = useState([])
+  const [cacheData, setcacheData] = useState([])
+  const netInfo = useNetInfo()
+
+  useEffect(() => {
+    if (cacheId) {
+      (async () => {
+        const preCache = await AsyncStorage.getItem(cacheId)
+        if ((netInfo.isConnected && data.length) && ((!preCache) || (((preCache && JSON.parse(preCache)) && (JSON.parse(preCache)?.length !== data.length))) || ((JSON.parse(preCache)?.length === data.length) && ((JSON.parse(preCache)[0].info && JSON.parse(preCache)[0].info !== data[0].info) || (JSON.parse(preCache)[0].title && JSON.parse(preCache)[0].title !== data[0].title)))) ) {
+          await AsyncStorage.setItem(cacheId, JSON.stringify(data))
+        }
+      })();
+      (async () => {
+        const cacheData = await AsyncStorage.getItem(cacheId)
+        if (cacheData) {
+          const dataParse = JSON.parse(cacheData)
+          dataParse.length && setcacheData(dataParse)
+        }
+      })()
+    }
+  }, [data])
+
 
 
   if (!pageLimit) {
     return (
-      data?.length
+      (data?.length || cacheData.length)
         ?
         <>
           <ComponentForScroll
             {...props}
-            style={[{flexWrap:'nowrap'}, props.style]}
-            data={data}
+            style={[{ flexWrap: 'nowrap' }, props.style]}
+            data={data.length ? data : cacheData}
             renderItem={({ item, index }) =>
-            <>
-              <View style={{ position: 'absolute', height: 0, width: 0 }} ref={() => setindex(index)} ></View>
-              
-              {renderItem({ item, index })}
+              <>
+                <View style={{ position: 'absolute', height: 0, width: 0 }} ref={() => setindex(index)} ></View>
+
+                {renderItem({ item, index })}
               </>
             }
             flatlist={true}
@@ -536,17 +564,17 @@ export const FlatList = ({ pageLimit, loading = true, column1, column2, column3,
   else {
 
     return (
-      data?.length
+      (data?.length || cacheData.length)
         ?
         <>
           <Component
-          style={[{flexWrap:'nowrap', paddingBottom:50}, props.style]}
+            style={[{ flexWrap: 'nowrap', paddingBottom: 50 }, props.style]}
             {...props}
             data={current}
-            renderItem={({ item, index }) => 
+            renderItem={({ item, index }) =>
               <View style={{ position: 'absolute', height: 0, width: 0 }} ref={() => setindex(index)} ></View>
               &&
-              renderItem({ item, index })}
+            renderItem({ item, index })}
             flatlist={true}
             keyExtractor={keyExtractor ? keyExtractor : (item, index) => item._id}
             numColumns={numColumns ? numColumns : column}
@@ -557,7 +585,7 @@ export const FlatList = ({ pageLimit, loading = true, column1, column2, column3,
 
           <Column w='100%' pos='absolute' b={2} ai='center' >
             <_Pagination
-              item={data}
+              item={data.length ? data : cacheData}
               current={current}
               setcurrent={setcurrent}
               pageLimit={pageLimit}
@@ -573,7 +601,7 @@ export const FlatList = ({ pageLimit, loading = true, column1, column2, column3,
   }
 }
 
-export const FlatListHorizontal = (props) => <ComponentForScroll flatlist={true} {...props} style={[{flexWrap:'wrap'}, props.style]} horizontal={true} Component={_FlatList} />
+export const FlatListHorizontal = (props) => <ComponentForScroll flatlist={true} {...props} style={[{ flexWrap: 'wrap' }, props.style]} horizontal={true} Component={_FlatList} />
 
 export const Vlist = (props) => <VirtualizedList keyExtractor={item => item._id} getItemCount={(data) => data.length} getItem={(data, index) => (data[index])} {...props} />
 
@@ -595,7 +623,7 @@ export const Ps = (props) => <_text ta='right' {...props} initalClass={s.p} />
 
 export const Pl = (props) => <_text ta='right' {...props} initalClass={s.p} ff='IRANSansWeb-Light' />
 
-export const Pfa = (props) => <_text ta='right' fs={16} {...props} style={[Platform.select({ ios:{fontFamily:'B Baran'}, default:{fontFamily:'B Baran Regular'}}), props.style]} />
+export const Pfa = (props) => <_text ta='right' fs={16} {...props} style={[Platform.select({ ios: { fontFamily: 'B Baran' }, default: { fontFamily: 'B Baran Regular' } }), props.style]} />
 
 export const Py = (props) => <_text ta='right' fw='bold' {...props} ff='Yekan Bakh Regular' />
 
