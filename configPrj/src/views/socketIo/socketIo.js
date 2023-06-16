@@ -14,8 +14,9 @@ import Icon from 'react-native-vector-icons/dist/FontAwesome5';
 import { Keyboard } from 'react-native';
 import download from '../../other/utils/download';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
+import { useNetInfo } from '@react-native-community/netinfo';
 
-let adminId
+let adminId, _item = []
 
 const AdminSocketIo = (p) => {
 
@@ -26,6 +27,7 @@ const AdminSocketIo = (p) => {
   const [showImage, setshowImage] = useState(false)
   const [pvMessage, setpvMessage] = useState('')
   const [pvChatMessage, setPvChatMessage] = useState([])
+  const [pvChatMessage2, setPvChatMessage2] = useState([])
   const [to, setto] = useState('')
   const [titleMessage, settitleMessage] = useState([])
 
@@ -33,6 +35,7 @@ const AdminSocketIo = (p) => {
   const tokenSocket = useRef()
   const socketTocken = useRef()
   const flatlistRef = useRef()
+  const netInfo = useNetInfo()
 
 
 
@@ -75,10 +78,10 @@ const AdminSocketIo = (p) => {
       p.navigation.getParent()?.setOptions({ tabBarStyle: { display: (videoUri) ? "none" : "flex" } })
       if (showChange) {
         (videoUri) ? changeNavigationBarColor('black') : changeNavigationBarColor('white')
-        if (videoUri) p.navigation.setOptions({ title: '', headerTransparent: true, statusBarHidden: true, statusBarColor: 'black', headerLeft: () => <Icon style={{ paddingRight: 10, color: '#555' }} name='arrow-left' size={21} onPress={() => setvideoUri('')} /> })
-        else p.navigation.setOptions({ title: 'پرسش سوالات', headerTransparent: false, statusBarHidden: false, statusBarColor: '#d29', headerLeft: () => { } })
+        if (videoUri) p.navigation.setOptions({ statusBarTranslucent: true, title: '', headerTransparent: true, statusBarHidden: true, statusBarColor: 'black', headerLeft: () => <Icon style={{ paddingRight: 10, color: '#555' }} name='arrow-left' size={21} onPress={() => setvideoUri('')} /> })
+        else p.navigation.setOptions({ statusBarTranslucent: false, title: 'پرسش سوالات', headerTransparent: false, statusBarHidden: false, statusBarColor: '#d29', headerLeft: () => { } })
       }
-       }
+    }
     else
       if (videoUri) p.navigation.setOptions({ headerLeft: () => <Icon style={{ paddingRight: 10, color: '#555' }} name='arrow-left' size={21} onPress={() => setvideoUri('')} /> })
       else p.navigation.setOptions({ headerLeft: () => { } })
@@ -93,7 +96,7 @@ const AdminSocketIo = (p) => {
 
 
   useFocusEffect(useCallback(() => {
-    setTimeout(() => {setshowChange(true)}, 2000); 
+    setTimeout(() => { setshowChange(true) }, 2000);
 
     AsyncStorage.getItem('socketTocken').then((_socketTocken) => {
       socketTocken.current = _socketTocken
@@ -105,6 +108,7 @@ const AdminSocketIo = (p) => {
       }
     })
   }, []))
+
 
 
   useEffect(() => {
@@ -203,6 +207,108 @@ const AdminSocketIo = (p) => {
   }, [])
 
 
+  const [audioChange, setaudioChange] = useState(false)
+
+  useEffect(() => {
+    if (Platform.OS === 'web') {
+
+      const audios = document.getElementsByTagName('audio')
+      const play = (e) => {
+        for (let i = 0; i < audios.length; i++) {
+          if (audios[i] !== e.target) audios[i]?.pause()
+        }
+      }
+      if (audios)
+        for (let i = 0; i < audios.length; i++) {
+          audios[i]?.removeEventListener('playing', play)
+          audios[i]?.addEventListener('playing', play)
+        }
+
+
+
+      const video_1 = document.getElementsByTagName('video')
+      const play_video = (e) => {
+        for (let i = 0; i < video_1.length; i++) {
+          if (video_1[i] !== e.target) video_1[i]?.pause()
+        }
+      }
+      if (video_1)
+        for (let i = 0; i < video_1.length; i++) {
+          video_1[i]?.removeEventListener('playing', play_video)
+          video_1[i]?.addEventListener('playing', play_video)
+        }
+
+
+
+      const video = document.getElementsByTagName('video')
+      const playVideo = () => {
+        const _audio = document.getElementsByTagName('audio')
+        for (let i = 0; i < video.length; i++) {
+          _audio[i]?.pause()
+        }
+      }
+      if (video)
+        for (let i = 0; i < video.length; i++) {
+          video[i]?.removeEventListener('playing', playVideo)
+          video[i]?.addEventListener('playing', playVideo)
+        }
+
+
+
+      const audio = document.getElementsByTagName('audio')
+      const playAudio = () => {
+        const _video = document.getElementsByTagName('video')
+        for (let i = 0; i < audio.length; i++) {
+          _video[i]?.pause()
+        }
+      }
+      if (audio)
+        for (let i = 0; i < audio.length; i++) {
+          audio[i]?.removeEventListener('playing', playAudio)
+          audio[i]?.addEventListener('playing', playAudio)
+        }
+    }
+
+  }, [audioChange])
+
+
+  useEffect(() => { setTimeout(() => { setaudioChange(!audioChange) }, 2000); }, [pvChatMessage])
+  useEffect(() => { setTimeout(() => { setaudioChange(!audioChange) }, 5000); }, [])
+
+
+  const [changeCache, setchangeCache] = useState(false)
+
+
+  useFocusEffect(useCallback(() => {
+    pvChatMessage.length &&
+    setTimeout(() => {
+      pvChatMessage.forEach((item, index) => {
+        ((item.userId == tokenSocket.current) || (adminId === socket.current.id) || (item.to === tokenSocket.current)) &&
+          (async () => {
+            let find = _item.findIndex(dt => dt._id === item._id)
+            if (find === -1 && pvChatMessage.find(pv => (pv._id !== 'a1')) && item._id !== 'a1') _item.push(item)
+            if (pvChatMessage.length && (pvChatMessage.length - 1 === index)) {
+              await AsyncStorage.setItem('socket_io', JSON.stringify(_item))
+            }
+          })();
+      });
+    }, 1000);
+  }, [changeCache, pvChatMessage]))
+
+
+
+  useFocusEffect(useCallback(() => {
+    (async () => {
+      const cacheData = await AsyncStorage.getItem('socket_io')
+      if (cacheData) {
+        const dataParse = JSON.parse(cacheData)
+        dataParse.length && setPvChatMessage2(dataParse)
+      }
+    })()
+    setTimeout(() => { setchangeCache(true) }, 1000);
+  }, [changeCache]))
+
+
 
   return (
     <Column f={1} >
@@ -211,27 +317,38 @@ const AdminSocketIo = (p) => {
         <P fs={25} h={30} pos='absolute' color='#99f' z={11111111} >{typing}</P>
       </Animated.View>
 
-      {(pvChatMessage.length || titleMessage.length) ?
+      {((pvChatMessage.length || pvChatMessage2.length) || titleMessage.length) ?
         <View onLayout={() => { setto('1') }} style={{ flex: 1 }} >
           <FlatList
             ref={flatlistRef}
             inverted
             keyExtractor={(data, i) => data._id}
-            data={pvChatMessage}
+            data={pvChatMessage.length ? pvChatMessage : pvChatMessage2}
             renderItem={({ item, index }) => (
               ((item.userId == tokenSocket.current) || (adminId === socket.current.id) || (item.to === tokenSocket.current)) ?
                 <Column style={{ opacity: (pvChatMessage.find(pv => (pv._id !== 'a1') && (pv.userId == tokenSocket.current)) && item._id === 'a1') ? 0 : 1, marginVertical: 10, marginHorizontal: 2, width: '70%', minHeight: 45, justifyContent: 'center', paddingHorizontal: 8, backgroundColor: item.to === to ? '#f8f8f8' : '#fff', borderWidth: 1, alignSelf: (item.to === to || item._id === 'a1') ? 'flex-start' : 'flex-end', borderRadius: 10, borderColor: '#ddd' }} >
-                  <Row fd='row-reverse' jc='flex-end' pt={3}>
+                  <Row
+                    // onLayout={()=>{
+                    //   (async () => {
+                    //    let find = _item.findIndex(dt=>dt._id === item._id )
+                    //    if(find === -1 &&  pvChatMessage.find(pv => (pv._id !== 'a1')) && item._id !== 'a1')  _item.unshift(item)
+                    //     if(pvChatMessage.length && (pvChatMessage.length -1 === index )){
+                    //        await AsyncStorage.setItem('socket_io', JSON.stringify(_item))
+                    //       }
+                    //   })();
+                    // }}
+                    fd='row-reverse' jc='flex-end' pt={3}>
                     {(pvChatMessage.find(pv => (pv._id !== 'a1' && (pv.userId == tokenSocket.current))) && (item.userId === tokenSocket.current)) && <P ta='right' style={{ fontSize: 9, paddingRight: 3, color: 'silver' }} >شما</P>}
                     {(pvChatMessage.find(pv => (pv._id !== 'a1') && (pv.userId == tokenSocket.current))) && <P ta='right' mr={20} style={{ fontSize: 9, paddingRight: 3, color: 'silver' }} >{moment(item.date).format('jM/jD hh:mm')}</P>}
                   </Row>
                   {!item.type ?
                     <P ta='right' p={3} >{item.message}</P> :
                     item.type === 'video' ?
-                      <Press onClick={() => {
-                        setvideoUri(`${localhost}/upload/socket/${item.uri}`)
-                        setshowVideo(true)
-                      }}>
+                      <Press
+                        onClick={() => {
+                          setvideoUri(`${localhost}/upload/socket/${item.uri}`)
+                          setshowVideo(true)
+                        }}>
                         <Video source={{ uri: `${localhost}/upload/socket/${item.uri}` }} style={{ height: 200, width: '90%', borderRadius: 4, alignSelf: 'center' }} />
                       </Press>
                       :
@@ -262,7 +379,7 @@ const AdminSocketIo = (p) => {
 
 
           <Column mt='auto' >
-            <InputBottom onClick={() => flatlistRef.current.scrollToOffset({ offset: 0 })} flatlistRef={flatlistRef} handleKeypress={handleKeypress} handlePvChat={handlePvChat} setpvMessage={setpvMessage} pvMessage={pvMessage} socket={socket} tokenSocket={tokenSocket} tokenValue={tokenValue} to={to} ></InputBottom>
+            <InputBottom changeCache={changeCache} setchangeCache={setchangeCache} onClick={() => flatlistRef.current.scrollToOffset({ offset: 0 })} flatlistRef={flatlistRef} handleKeypress={handleKeypress} handlePvChat={handlePvChat} setpvMessage={setpvMessage} pvMessage={pvMessage} socket={socket} tokenSocket={tokenSocket} tokenValue={tokenValue} to={to} ></InputBottom>
           </Column>
 
 

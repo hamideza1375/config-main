@@ -86,11 +86,12 @@ import { SafeAreaView } from "react-native";
 
 rtl()
 LogBox.ignoreAllLogs();
+let _height = Dimensions.get('window').height;
 
 
 const Tab = createNativeStackNavigator()
 const BottomTab = createBottomTabNavigator()
-let _height, das = []
+let das = []
 const Mobile = () => {
 
   useEffect(() => { setTimeout(() => { if ((Platform.OS !== 'web') && (!I18nManager.isRTL)) { reload() } }, 3000) }, [])
@@ -110,7 +111,7 @@ const Mobile = () => {
   useEffect(() => {
     setTimeout(() => {
       netInfo.isConnected && setshow(true)
-    }, 400);
+    }, 200);
   }, [netInfo])
 
 
@@ -133,15 +134,14 @@ const Mobile = () => {
   }
 
   useEffect(() => {
-    _height = Dimensions.get('window').height;
+      Dimensions.addEventListener('change', ({ window: { width, height } }) => {
+    if ((height + 130) < _height) setshowTab(false)
+    else setshowTab(true)
+  })
   }, [])
 
 
 
-  Dimensions.addEventListener('change', ({ window: { width, height } }) => {
-    if (height < _height) setshowTab(false)
-    else setshowTab(true)
-  })
 
 
   const [refresh, setrefresh] = useState(false)
@@ -166,7 +166,7 @@ const Mobile = () => {
 
 
         <Column
-          onMoveShouldSetResponder={(e) => { if (e) { if (das.length >= 2) das = []; setTimeout(() => { das = [] }, 400); das.push(e.nativeEvent.pageY); y.current = e.nativeEvent.pageY; if ((y.current < 70) && (y.current - e.nativeEvent.pageY < 40) && (das[1]) > (das[0] + 5) && (navigation.getCurrentRoute().params.key === 'client' || navigation.getCurrentRoute().params.key === 'home')) {onRefresh(e)} } }}
+          onMoveShouldSetResponder={(e) => { if (e) { if (das.length >= 2) das = []; setTimeout(() => { das = [] }, 200); das.push(e.nativeEvent.pageY); y.current = e.nativeEvent.pageY; if ((y.current < 80) && (das[1]) > (das[0] + 9) && (navigation.getCurrentRoute().params.key === 'client' || navigation.getCurrentRoute().params.key === 'home')) {onRefresh(e)} } }}
           // onTouchStart={(e)=>{y.current = e.nativeEvent.pageY}} onTouchEnd={(e)=>{if(y.current < 50 && (y.current - e.nativeEvent.pageY < 40)) onRefresh(e) }}
           f={1} w='100%' minw={280} onClick={() => { allState.init.shownDropdown && allState.init.setshownDropdown(false); allState.init.$input?.get('dropdownDrawer')?.current?.setNativeProps({ style: { display: 'flex', transform: [{ scale: 0 }] } }) }}>
           <Dropdown root {...allState.init}><Press onClick={() => { }} >{allState.init.dropdownValue}</Press></Dropdown>
@@ -220,7 +220,7 @@ const Mobile = () => {
 
             <Tab.Screen name="SocketIo" options={{ ...!allState.init.tokenValue.isAdmin ? {} : { tabBarButton: () => null }, tabBarBadge: allState.init.socketIoSeen ? true : null, headerShown: false, tabBarLabel: '', tabBarIcon: ({ color, size }) => (<Icon name="comments" color={color} size={size - 5} />) }} >{() =>
               <Tab.Navigator screenListeners={{ focus: inputFocus }} screenOptions={{ statusBarColor: '#d29', }} >
-                <Tab.Screen initialParams={{ key: 'client' }} name="Socket" options={{ title: 'پرسش سوالات', headerTitleAlign: 'center' }} {...clientChildren(SocketIo)} />
+                <Tab.Screen initialParams={{ key: 'socket' }} name="Socket" options={{ title: 'پرسش سوالات', headerTitleAlign: 'center' }} {...clientChildren(SocketIo)} />
               </Tab.Navigator>
             }</Tab.Screen>
 
@@ -447,11 +447,12 @@ else {
           else { await AsyncStorage.setItem('cancelInstalled', String(Number(cancelInstalled) + 1)); }
         });
       }
+
     }
 
     return (
       <NavigationContainer linking={linking} >
-        <Column onStartShouldSetResponderCapture={installStatus} style={{ width: '100%', height }} >
+        <Column onStartShouldSetResponderCapture={installStatus} style={{ width: '100%', height, minHeight:'100dvh' }} >
           <Mobile />
         </Column>
       </NavigationContainer>
