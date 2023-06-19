@@ -2,8 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import Axios from 'axios'
 import jwtDecode from "jwt-decode";
-import { useCallback, useLayoutEffect, useState } from 'react'
-import { Dimensions, Platform } from 'react-native'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { Platform } from 'react-native'
 
 import { adminController } from "./adminController";
 import { clientController } from "./clientController";
@@ -51,7 +51,7 @@ export const _initController = (p) => {
           if (_show == false && error['request']?.status !== 0) { _show = true; setshow(true) }
           if (error['request']?.status === 0) {
             if (!serverOff2) {
-              p.setSplash(true)
+              // p.setSplash(true)
               toastServerError()
               serverOff2 = true
               _show = false; setshow(false)
@@ -60,7 +60,7 @@ export const _initController = (p) => {
           }
           else if (error?.response?.status) {
             p.setshowActivity(false)
-            if (error.response.status === 401) { if (p.goToUser && goToUser) { goToUser = false; p.setgoToUser(false); setTimeout(() => { goToUser = true; p.setgoToUser(true) }, 1500); navigation.navigate('User'); toast401(error.response.data) } }
+            if (error.response.status === 401) { if (p.goToUser && goToUser) { goToUser = false; p.setgoToUser(false); setTimeout(() => { goToUser = true; p.setgoToUser(true) }, 1500); navigation.navigate('User', { screen: 'Logout' }); toast401(error.response.data) } }
             else if (error.response.status > 400 && error.response.status <= 500) { toast500(); p.setshowActivity(false) };
             if (error.response.status === 400 && error.response.data) { toast400(error.response.data) };
           } return Promise.reject(error);
@@ -88,19 +88,27 @@ export const _initController = (p) => {
   }, [change])
 
 
+  useEffect(() => { (!p.splash && netInfo.isConnected) && p.setchangeRefresh(!p.changeRefresh) }, [netInfo])
+  
+
 
   useLayoutEffect(() => { p.$input.set('a', 'a') }, [])
   useLayoutEffect(() => {
-    show === true && setTimeout(() => { if (show === true) { p.setSplash(false); p.setshowActivity(false) } }, 200)
-    show === false && p.setSplash(true);
+    /* show === true && */ setTimeout(() => { if (show === true) { p.setSplash(false); p.setshowActivity(false) } }, 200)
+    // show === false && p.setSplash(true);
   }, [show])
-  Dimensions.addEventListener('change', ({ window: { width, height } }) => { p.setwidth(width); p.setheight(height) })
+
+  // useEffect(() => {
+  //   Dimensions.addEventListener('change', ({ window: { width, height } }) => { p.setwidth(width); p.setheight(height) })
+  // }, [])
+  
+
 
   useLayoutEffect(() => {
     setTimeout(() => { setchange2(true) }, 200);
     if (change2)
       if (netInfo.isConnected !== true) {
-        p.setSplash(true);
+        // p.setSplash(true);
         if (!serverOff) {
           toastNetworkError()
           serverOff = true
@@ -150,16 +158,14 @@ export function allChildren({ client, user, admin }) {
     children: (props) => {
 
       const b = () => {
-        if (location.href === location.origin || location.href === myhost) history.back()
-        if ((props.route.name === 'Home' || props.route.params?.key === 'home') && (location.href === myhost || location.href === 'http://localhost:3000/home')) {
-          num++;
-          if (num === 1) { client.toast.show('', 'برای خروج دوبار کلیک کنید', 2000); setTimeout(() => { num = 0 }, 1000); }
-          if (num >= 2) { history.back(); history.back() }
-        }
+        if ((location.href === (location.origin + '/home')) || (location.href === (location.origin)) || (location.href === (location.origin + '/')) ) num++;
+        if (num === 1) { client.toast.show('', 'برای خروج دوبار کلیک کنید', 2000); setTimeout(() => { num = 0 }, 2000); }
+        if (num >= 2) { history.back(); history.back(); }
+        if ((location.href === location.origin) || (location.href === location.origin + '/')) {history.back(); history.back()}
         else return
       }
-      _useEffect(() => { if (Platform.OS === 'web') { if (props.route.name === 'Home') history.pushState({}, location.href) }}, [])
-      _useEffect(() => { if (Platform.OS === 'web') window.addEventListener('popstate', b); return () => { if (Platform.OS === 'web') { num = 0, a = 0; window.removeEventListener('popstate', b); } } }, [])
+      _useEffect(() => { if (Platform.OS === 'web' && window.matchMedia('(display-mode:standalone)').matches) { if (props.route.name === 'Home') history.pushState({}, '/home'/* location.href */) }}, [])
+      _useEffect(() => { if (Platform.OS === 'web' && window.matchMedia('(display-mode:standalone)').matches) window.addEventListener('popstate', b); return () => { if (Platform.OS === 'web') { num = 0, a = 0; window.removeEventListener('popstate', b); } } }, [])
 
       _useEffect(() => { AsyncStorage.getItem("token").then((token) => { if ((props.route.name === 'SetAddressForm' || props.route.name === 'SetAddressInTehran' || props.route.name === 'ProductBasket') && (!token)) props.navigation.navigate('User', { screen: 'Login', params: { payment: 'true' } }); })}, [])
       _useEffect(() => { client.setshownDropdown(false); }, [])
@@ -182,7 +188,7 @@ export function allChildren({ client, user, admin }) {
       }, [])
       useLayoutEffect(() => { if (props.route.params?.id && !idValidator(props.route.params.id)) return props.navigation.navigate('NotFound') })
       if (show) return <Layout _key={key} {...props} {...user}>{user.showActivity && <Loading setshowActivity={user.setshowActivity} pos='absolute' top={15} time={900000} />}<Component {...props} {...user} {...userReducer(props)} /></Layout>
-      else return <SplashScreen {...client} />
+      else return <SplashScreen {...user} />
     }
   })
   this.adminChildren = (Component, key) => ({
@@ -198,7 +204,7 @@ export function allChildren({ client, user, admin }) {
       }, [])
       useLayoutEffect(() => { if (props.route.params?.id && !idValidator(props.route.params.id)) return props.navigation.navigate('NotFound') })
       if (show) return <Layout _key={key} {...props} {...admin}>{admin.showActivity && <Loading setshowActivity={admin.setshowActivity} pos='absolute' top={15} time={900000} />}<Component {...props} {...admin} {...adminReducer(props)} /></Layout>
-      else return <SplashScreen {...client} />
+      else return <SplashScreen {...admin} />
     }
   })
 
