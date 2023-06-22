@@ -172,7 +172,7 @@ const Mobile = () => {
           <Dropdown root {...allState.init}><Press onClick={() => { }} >{allState.init.dropdownValue}</Press></Dropdown>
           <Init ref={(e) => allState.init.set$(e)} id={'s'} />
           <ToastProvider {...allState.init} />
-          <BottomTab.Navigator backBehavior="history" screenOptions={({ route }) => ({ tabBarHideOnKeyboard: true, tabBarInactiveTintColor: 'white', tabBarActiveTintColor: '#a05', tabBarActiveBackgroundColor: '#e833a8ee', tabBarInactiveBackgroundColor: '#e833a8ee', headerTitleStyle: { color: 'transparent' }, headerTitleAlign: 'center', ...icon, tabBarStyle: (Platform.OS === 'web' && (navigator?.userAgent?.match('Mobile') == 'Mobile')) ? { display: (showTab ? 'flex' : 'none') } : {}, tabBarBadgeStyle: { backgroundColor: '#0e5' } })}>
+          <BottomTab.Navigator /* backBehavior="history" */ screenOptions={({ route }) => ({ tabBarHideOnKeyboard: true, tabBarInactiveTintColor: 'white', tabBarActiveTintColor: '#a05', tabBarActiveBackgroundColor: '#e833a8ee', tabBarInactiveBackgroundColor: '#e833a8ee', headerTitleStyle: { color: 'transparent' }, headerTitleAlign: 'center', ...icon, tabBarStyle: (Platform.OS === 'web' && (navigator?.userAgent?.match('Mobile') == 'Mobile')) ? { display: (showTab ? 'flex' : 'none') } : {}, tabBarBadgeStyle: { backgroundColor: '#0e5' } })}>
 
             <Tab.Screen name="Client" options={{ title: 'دیجی کالا', headerShown: false, tabBarLabel: '', tabBarIcon: ({ color, size }) => (<Icon name="home" color={color} size={size - 5} />) }} >{() =>
               <Tab.Navigator initialRouteName="Home" screenListeners={{ focus: inputFocus }} screenOptions={{ statusBarColor: '#d29', headerShown: false }}>
@@ -254,7 +254,7 @@ const Mobile = () => {
               </Tab.Navigator>
             }</Tab.Screen>
 
-            <Tab.Screen name="NotFound" options={{ title: '404', headerShown: false, tabBarStyle: { display: 'none' }, tabBarButton: () => null }} {...clientChildren(_404)} />
+            <BottomTab.Screen name="NotFound" options={{ title: '404', headerShown: false, tabBarStyle: { display: 'none' }, tabBarButton: () => null }} {...clientChildren(_404)} />
           </BottomTab.Navigator >
         </Column>
       </contextStates.Provider>
@@ -328,6 +328,7 @@ const linking = {
     screens: {
 
       Client: {
+        initialRouteName:'Home',
         screens: {
           Home: '/:key',
           ProductsOffers: '/productsoffers',
@@ -340,6 +341,7 @@ const linking = {
       },
 
       BeforePayment: {
+        initialRouteName:'ProductBasket',
         screens: {
           ProductBasket: '/productbasket',
           SetAddressForm: '/setaddressform',
@@ -378,6 +380,7 @@ const linking = {
       },
 
       Admin: {
+        initialRouteName:'PanelAdmin',
         screens: {
           PanelAdmin: '/paneladmin',
           AdminTicketBox: '/adminTicketBox',

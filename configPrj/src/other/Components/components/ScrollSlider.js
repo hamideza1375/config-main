@@ -7,46 +7,49 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNetInfo } from '@react-native-community/netinfo';
 
 
-var das = [], old = 0, time = 3000
+var das = [], das2 = [], das3 = [], old = 0, time = 2500
+
+let sc = true
 
 function ScrollSlider(p) {
   const { cacheId, data, renderItem, h, style, ccStyle } = p
   const ref = useRef()
   const [scroll2, setscroll2] = useState(true)
   const [cacheData, setcacheData] = useState([])
+  const [change, setchange] = useState(false)
 
   const count = useRef({ count: 1 })
   const interval = useRef({ interval: null })
 
-
   useEffect(() => {
-    setTimeout(() => {
-      try { ref.current?.scrollToIndex({ index: 1, animated: true }); }
-      catch (err) { }
-    }, 1000);
-  }, [])
+    try { ((data.length > 1) || (cacheData.length > 1)) && ref.current?.scrollToIndex({ index: 1 }); }
+    catch (err) { }
+  }, [change])
 
+  useEffect(() => { setchange(true); setTimeout(() => { setchange(false) }, 700); }, [])
 
   const open = () => {
-    if (scroll2) {
-      try { ref.current?.scrollToIndex({ index: count.current.count, animated: true }); }
+    if (scroll2 && sc) {
+      try { (data.length || (cacheData.length > 1)) && ref.current?.scrollToIndex({ index: count.current.count, animated: true }); }
       catch (err) { }
-      count.current.count = count.current.count + 2
+      count.current.count = count.current.count + 1
       old = count.current.count
     }
   };
 
   const open2 = () => {
-    if (parseInt(count.current.count) >= old + 1 || parseInt(count.current.count) <= old - 1) {
+    if ((parseInt(count.current.count) >= old + 1 || parseInt(count.current.count) <= old - 1) && (data.length || (cacheData.length > 1))) {
       old = (parseInt(count.current.count))
       try { ref.current?.scrollToIndex({ index: parseInt(count.current.count), animated: true }); }
       catch (err) { }
     }
+    sc = false
+    setscroll2(false)
   };
 
 
-  if (count.current.count + 1 >= data.length) { clearInterval(interval.current.interval) }
-  if (!scroll2) { clearInterval(interval.current.interval) }
+  if (count.current.count + 1 >= data.length) { interval.current && clearInterval(interval.current.interval) }
+  if (!scroll2) { interval.current && clearInterval(interval.current.interval) }
 
 
   useFocusEffect(useCallback(() => {
@@ -54,12 +57,12 @@ function ScrollSlider(p) {
     if (Platform.OS === 'web')
       window.addEventListener('resize', (event) => {
         setscroll2(false);
-        clearInterval(interval.current.interval)
+        interval.current && clearInterval(interval.current.interval)
       });
 
     return () => {
       setscroll2(false);
-      clearInterval(interval.current.interval)
+      interval.current && clearInterval(interval.current.interval)
     }
   }, []))
 
@@ -87,11 +90,10 @@ function ScrollSlider(p) {
       style={{ cursor: 'grab' }}
       class={s.selectNone}
       onMouseUp={(e) => { setscroll2(false); setTimeout(() => { das = [] }, 195); }}
-      onMoveShouldSetResponder={() => { if (data.length > 5) setscroll2(false); else setTimeout(() => { setscroll2(false) }, 2500); }}
-      onTouchMove={() => { if (data.length > 5) setscroll2(false); else setTimeout(() => { setscroll2(false) }, 2500); }} >
+      onTouchStart={(e) => { das2.push(e.nativeEvent.pageX); }}
+      onMoveShouldSetResponder={(e) => { das2.push(e.nativeEvent.pageX); if (Platform.OS !== 'web') { if (das2.length > 2) setscroll2(false) } else { if (das2.length > 4) setscroll2(false) } }}>
       <Column
         onMoveShouldSetResponder={(e) => {
-          if (data.length > 5) setscroll2(false); else setTimeout(() => { setscroll2(false) }, 2500);
           if (Platform.OS === 'web')
             if (navigator?.userAgent?.match('Mobile') != 'Mobile') {
               das.push(e.nativeEvent.pageX)
@@ -106,8 +108,10 @@ function ScrollSlider(p) {
       >
         {(data.length || (cacheData.length > 1)) ?
           <FlatList
+
             getItemLayout={(data, index) => ({ length: (160 + 10), offset: (160 + 10) * index, index })}
             // initialNumToRender={4}
+            // initialScrollIndex={0}
             showsHorizontalScrollIndicator={false}
             dir='ltr'
             ref={ref}
@@ -115,7 +119,7 @@ function ScrollSlider(p) {
             {...p}
             renderItem={renderItem}
             contentContainerStyle={[{ flexGrow: 1, direction: 'rtl' }, ccStyle]}
-            onLayout={(e) => { let int = setInterval(sum, time); function sum() { if (scroll2 && !(count.current.count >= data.length)) { open() } else clearInterval(int) } interval.current.interval = int }}
+            onLayout={(e) => { let int = setInterval(sum, time); function sum() { if (scroll2 && (count.current.count < data.length ? data.length : cacheData.length)) { open() } else clearInterval(int) } interval.current.interval = int }}
             // scrollEventThrottle={0}
             // alwaysBounceHorizontal={false}
             // alwaysBounceVertical={false}
