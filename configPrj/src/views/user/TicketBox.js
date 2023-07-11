@@ -2,7 +2,7 @@ import { Column } from "../../other/Components/Html"
 
 const TicketBox = () => {
   return (
-    <Column>ForgetPass</Column>
+    <Column>TicketBox</Column>
   )
 }
 

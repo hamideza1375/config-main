@@ -2,7 +2,7 @@ import { Column } from "../../other/Components/Html"
 
 const ResetPass = () => {
   return (
-    <Column>ForgetPass</Column>
+    <Column>ResetPass</Column>
   )
 }
 

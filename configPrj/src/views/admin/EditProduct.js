@@ -2,7 +2,7 @@ import { Column } from '../../other/Components/Html'
 
 const EditProduct = () => {
   return (
-    <Column>AddAdmin</Column>
+    <Column>EditProduct</Column>
   )
 }
 

@@ -2,7 +2,7 @@ import { Column } from "../../other/Components/Html"
 
 const SendTicket = () => {
   return (
-    <Column>ForgetPass</Column>
+    <Column>SendTicket</Column>
   )
 }
 

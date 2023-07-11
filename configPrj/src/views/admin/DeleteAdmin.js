@@ -2,7 +2,7 @@ import { Column } from '../../other/Components/Html'
 
 const DeleteAdmin = () => {
   return (
-    <Column>AddAdmin</Column>
+    <Column>DeleteAdmin</Column>
   )
 }
 

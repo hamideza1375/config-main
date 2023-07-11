@@ -2,7 +2,7 @@ import { Column } from "../../other/Components/Html"
 
 const GetCode = () => {
   return (
-    <Column>ForgetPass</Column>
+    <Column>GetCode</Column>
   )
 }
 

@@ -8,26 +8,6 @@ const Map = (p) => {
   const [disable, setdisable] = useState(true)
 
 
-  // useLayoutEffect(() => {
-    // const _link = document.createElement('link');
-    // if (!_link?.id) {
-    // _link.href = `${localhost}/leaflet/leaflet.css`
-    // _link.rel = "stylesheet"
-    // _link.id = 'mapStyle';
-    // document.head.appendChild(_link);
-    // }
-    // const mapScript = document.getElementById('mapScript');
-    // if (!mapScript?.id) {
-    //   const _script = document.createElement('script');
-    //   _script.src = `${localhost}/leaflet/leaflet.js`
-    //   _script.async = true;
-    //   _script.id = 'mapScript';
-    //   document.body.appendChild(_script);
-    // }
-  // }, [])
-
-
-
   return (
     <div style={{ width: '100%', height: '100%' }}>
 

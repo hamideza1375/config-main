@@ -2,7 +2,7 @@ import { Column } from '../../other/Components/Html'
 
 const SendPostPrice = () => {
   return (
-    <Column>AddAdmin</Column>
+    <Column>SendPostPrice</Column>
   )
 }
 
