@@ -1,17 +1,21 @@
-import React, { memo, useEffect, useReducer } from 'react'
-import { Column, Img, P, Press, ScrollSlider } from '../../../../other/Components/Html'
-import LinearGradient from '../../../../other/Components/other/LinearGradient'
-import { localhost } from '../../../../other/utils/axios/axios'
-import { reducerGetCategory } from '../../../../reducers/reducers'
-import { actionGetCategory } from '../../../../actions/actions'
+import { useEffect } from 'react';
+import { Column, Img, P, Press, ScrollSlider } from '../../other/Components/Html'
+import LinearGradient from '../../other/Components/other/LinearGradient'
+import { localhost } from '../../other/utils/axios/axios'
+
 
 const Category = (p) => {
-  const [category, dispatch] = useReducer(reducerGetCategory, []);
 
   useEffect(() => {
-    actionGetCategory(dispatch, "GETCATEGORY")
+    p.setcategory([
+      { id: '1', title: '1', imageUrl: 'p1.png' },
+      { id: '2', title: '2', imageUrl: 'e.png' },
+      { id: '3', title: '3', imageUrl: '7.png' },
+      { id: '4', title: '4', imageUrl: 'e.png' },
+    ])
   }, [])
-  
+
+
   return (
     <Column minh={150} >
       <Column fd='row' ai='center' >
@@ -22,13 +26,13 @@ const Category = (p) => {
       <ScrollSlider
         h={180}
         ccStyle={{ height: 180, justifyContent: 'center', alignSelf: 'center' }}
-        data={category}
+        data={p.category}
         renderItem={({ item, index }) => (
           <Column w={105} h={115} as='center' fg={1} >
             <Column w={90} h={95} as='center'>
               <LinearGradient nativeStart={{ x: 1.5, y: 1.5 }} webStart={{ x: 7 }} colors={['#f5f', '#505', '#f5f']} style={{ borderRadius: 100, width: 90, height: 90, maxHeight: 90, justifyContent: 'center', alignItems: 'center' }} >
                 <Column w={84} h={84} style={{ borderRadius: 100, backgroundColor: 'white', position: 'absolute' }} >
-                  {item.imageUrl && <Press f={1} onClick={() => { p.navigation.navigate('Products', { id: item._id }) }}><Img f={1} br={100} src={{ uri: `${localhost}/upload/category/${item.imageUrl}` }} /></Press>}
+                  {item.imageUrl && <Press f={1} onClick={() => { p.navigation.navigate('Products', { id: item._id }) }}><Img f={1} br={100} src={{ uri: `${localhost}/upload/slider/${item.imageUrl}` }} /></Press>}
                 </Column>
               </LinearGradient>
             </Column>
@@ -39,4 +43,4 @@ const Category = (p) => {
     </Column>)
 }
 
-export default memo(Category)
+export default Category

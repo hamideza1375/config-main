@@ -1,8 +1,8 @@
 
 import React, { useEffect, useRef } from "react";
 import { Animated, PanResponder, Platform } from "react-native";
-import { Badge, M_icon, Press } from '../../../../other/Components/Html'
-import { getSocketIoSeenUser } from "../../../../services/clientService";
+import { Badge, M_icon, Press } from '../../other/Components/Html'
+import { getSocketIoSeenUser } from "../../services/clientService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 

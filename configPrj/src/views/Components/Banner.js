@@ -1,6 +1,6 @@
 import React from 'react'
-import { Img, Column } from '../../../../other/Components/Html'
-import { localhost } from '../../../../other/utils/axios/axios'
+import { Img, Column } from '../../other/Components/Html'
+import { localhost } from '../../other/utils/axios/axios'
 
 const Banner = () => {
   return (

@@ -8,8 +8,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Description = (p) => {
 
-  p._client.setColor()
-  p._client.getSingleSeller()
 
 
   let price = 0

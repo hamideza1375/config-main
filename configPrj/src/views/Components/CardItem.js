@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import Icon from 'react-native-vector-icons/dist/FontAwesome5'
-import { A_icon, Card2, M_icon, P, Pfa, Row, Column } from '../../../other/Components/Html'
-import { localhost } from '../../../other/utils/axios/axios'
-import seconder from '../../../other/utils/seconder'
+import { A_icon, Card2, M_icon, P, Pfa, Row, Column } from '../../other/Components/Html'
+import { localhost } from '../../other/utils/axios/axios'
+import seconder from '../../other/utils/seconder'
 
 const CardItem = ({ onClick, item, spacePrice, h = 240, w , style, sh = { r: 6, o: .4, of: { width: 0, height: 2 } } }) => {
 

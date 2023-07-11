@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Card2, Column, Modal, P, Press, Py, Row, Scroll, Span } from '../../../../other/Components/Html'
+import { Card2, Column, Modal, P, Press, Py, Row, Scroll, Span } from '../../other/Components/Html'
 
 const Specifications = (p) => {
 

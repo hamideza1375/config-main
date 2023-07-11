@@ -4,7 +4,7 @@ import { Card2, Img, Press, Column } from '../../other/Components/Html'
 
 const ImageDisplay = (p) => {
   let imageMap = []
-   imageMap = [p.logoUrl, p.logoUrl, p.logoUrl, p.logoUrl]
+   imageMap = [p.logoUrl, require('../../other/assets/images/p1.png'), require('../../other/assets/images/7.png'), require('../../other/assets/images/e.png')]
 
   _useEffect(() => {
     p.$?.id(imageMap[0])?.setNativeProps({ style: { borderWidth: 1, borderColor: 'aqua' } })
@@ -12,12 +12,12 @@ const ImageDisplay = (p) => {
   
   _useEffect(() => {
     return()=>{
-    p.$.id(imageMap[1])?.setNativeProps({ style: { borderWidth: 0 } })
-    p.$.id(imageMap[2])?.setNativeProps({ style: { borderWidth: 0 } })
-    p.$.id(imageMap[3])?.setNativeProps({ style: { borderWidth: 0 } })
+    p.$?.id(imageMap[1])?.setNativeProps({ style: { borderWidth: 0 } })
+    p.$?.id(imageMap[2])?.setNativeProps({ style: { borderWidth: 0 } })
+    p.$?.id(imageMap[3])?.setNativeProps({ style: { borderWidth: 0 } })
     }
   }, [])
-
+ 
 
   return (
     <Column minw={250} w='100%' ai='center' jc='center'>
@@ -34,9 +34,9 @@ const ImageDisplay = (p) => {
           <Column fg={1} style={{ flex: 1, justifyContent: 'center', flexDirection: 'row' }}  >
             {imageMap.length && (imageMap).map((item, index) => (
               <Press f={1} key={index} id={item} onClick={() => {
-                imageMap.forEach(img => (item !== img && p.$.id(img).setNativeProps({ style: { borderWidth: 0, borderColor: 'white' } })))
-                p.$.id(item).setNativeProps({ style: { borderWidth: 1, borderColor: 'aqua' } });
-                p.$.id('img').$({ src: item })
+                imageMap.forEach(img => (item !== img && p.$?.id(img).setNativeProps({ style: { borderWidth: 0, borderColor: 'white' } })))
+                p.$?.id(item).setNativeProps({ style: { borderWidth: 1, borderColor: 'aqua' } });
+                p.$?.id('img').$({ src: item })
 
               }}   >
                {item? <Img f={1} m={4} br={4} style={{ resizeMode: 'stretch' }} src={item} /> : <></> }

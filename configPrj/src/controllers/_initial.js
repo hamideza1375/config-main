@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import Axios from 'axios'
 import jwtDecode from "jwt-decode";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { Platform } from 'react-native'
 
 import { adminController } from "./adminController";
@@ -97,10 +97,6 @@ export const _initController = (p) => {
     // show === false && p.setSplash(true);
   }, [show])
 
-  // useEffect(() => {
-  //   Dimensions.addEventListener('change', ({ window: { width, height } }) => { p.setwidth(width); p.setheight(height) })
-  // }, [])
-
 
 
   useLayoutEffect(() => {
@@ -136,7 +132,7 @@ const SplashScreen = (state) => {
 }
 
 export function allChildren({ client, user, admin }) {
-  const [show, setshow] = useState(false)
+  const [show, setshow] = useState(true)
   const netInfo = useNetInfo()
 
   useLayoutEffect(() => {
@@ -145,14 +141,6 @@ export function allChildren({ client, user, admin }) {
     }, 150);
   }, [netInfo])
 
-  // const b = () => {
-  //   console.log(location.href);
-  //   if ((location.href === (location.origin + '/home')) || (location.href === (location.origin)) || (location.href === (location.origin + '/'))) { num++; setTimeout(() => { num = 0 }, 1000) };
-  //   if (num === 2) { client.toast.show('', 'برای خروج دوبار کلیک کنید', 1000); setTimeout(() => { num = 0 }, 1000); }
-  //   if (num >= 2) { setTimeout(() => {history.go(-(history.length - 1)) ; history.back()}, 100); return }
-  //   if ((location.href === location.origin) || (location.href === location.origin + '/')) { history.go(-(history.length - 1)) ; history.back() }
-  //   else return
-  // }
 
   const b = () => {
     if ((location.href === (location.origin + '/home')) || (location.href === (location.origin)) || (location.href === (location.origin + '/'))) { num++; setTimeout(() => { num = 0 }, 1000) };

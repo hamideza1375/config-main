@@ -1,15 +1,23 @@
-import React, { memo } from 'react'
-import _useEffect from '../../../../controllers/_initial'
-import { Img, P, Press, Py, ScrollSlider, Column } from '../../../../other/Components/Html'
-import LinearGradient from '../../../../other/Components/other/LinearGradient'
-import spacePrice from '../../../../other/utils/spacePrice'
-import s from '../../client.module.scss'
-import CardItem from '../CardItem'
-import { localhost } from '../../../../other/utils/axios/axios'
+import React, { useEffect } from 'react'
+import _useEffect from '../../controllers/_initial'
+import { Img, P, Press, Py, ScrollSlider, Column } from '../../other/Components/Html'
+import LinearGradient from '../../other/Components/other/LinearGradient'
+import spacePrice from '../../other/utils/spacePrice'
+import s from './style.module.scss'
+import CardItem from './CardItem'
+import { localhost } from '../../other/utils/axios/axios'
 
 
 const SliderOffers = (p) => {
-  p._client.getOffers()
+
+  useEffect(() => {
+    p.setoffers([
+      { id: '1', title: '1', imageUrl: 'p1.png' },
+      { id: '2', title: '2', imageUrl: 'e.png' },
+      { id: '3', title: '3', imageUrl: '7.png' },
+      { id: '4', title: '4', imageUrl: 'e.png' },
+    ])
+  }, [])
 
   return (
     <>
@@ -27,7 +35,6 @@ const SliderOffers = (p) => {
             <LinearGradient nativeStart={{ x: 1.5, y: 1.5 }} webStart={{ x: 7 }} colors={['#f5f', '#505']} style={{ width: '50%', height: 1, flexGrow: 1, marginHorizontal: 25 }} ></LinearGradient>
           </Column>
 
-          {p.offers.length ?
             <ScrollSlider
               style={{ height: 300, minHeight: 300 }}
               ccStyle={{ height: 300, minHeight: 300, justifyContent: 'center' }}
@@ -37,9 +44,7 @@ const SliderOffers = (p) => {
                   <CardItem item={item} spacePrice={spacePrice} offers w={170} onClick={() => { p.navigation.navigate('SingleProduct', { id: item._id }) }} />
                 </Column>
               )}
-            /> :
-            <></>
-          }
+            /> 
         </Column>
         <Press fd='row' onClick={() => p.navigation.navigate('ProductsOffers')} pos='absolute' b={10} l={10} z={2}><Py color='#fff' >نمایش بیشتر </Py><P mt={1} mr={2} color='#fff' >↩</P></Press>
       </Column>
@@ -47,4 +52,4 @@ const SliderOffers = (p) => {
   )
 }
 
-export default memo(SliderOffers)
+export default SliderOffers
