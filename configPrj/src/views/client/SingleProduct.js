@@ -5,8 +5,8 @@ import share from '../../other/utils/share';
 import ImageDisplay from '../Components/ImageDisplay';
 import CommentCard from '../Components/CommentCard';
 import Specifications from '../Components/Specifications';
+import Description from '../Components/Description';
 
-const Description = lazy(() => import('./components/singleItem/Description'));
 
 
 

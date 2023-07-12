@@ -42,7 +42,7 @@ const Footer = () => {
           </Row>
 
           <Row mt={8} ai='center' >
-            <P color='white'>تماس: </P><Pfa color='white'>  09099999</Pfa>
+            <P color='white'>تماس: </P><Pfa color='white'>  090999999</Pfa>
           </Row>
 
 

@@ -1,13 +1,17 @@
 import React from 'react'
-import { Badge, Button, Card2, Column, Div, Icon, P, Pfa, Press, Row, Span } from '../../../../other/Components/Html'
-import spacePrice from '../../../../other/utils/spacePrice'
-import _useEffect from '../../../../controllers/_initial';
-import convertColor from '../../../../other/utils/convertColor'
+import { Badge, Button, Card2, Column, Icon, P, Pfa, Press, Row, Span } from '../../other/Components/Html'
+import spacePrice from '../../other/utils/spacePrice'
+import _useEffect from '../../controllers/_initial';
+import convertColor from '../../other/utils/convertColor'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const Description = (p) => {
 
+  _useEffect(() => {
+   p.setsingleItem({id:'1', title:'1', price:100000, color:[{color:'red', value:2}, {color:'blue', value:2}], offerValue:10, offerTime:{exp:Date.now() + 100 * 1000 * 60 * 60 * 24, value:100}})
+  }, [])
+  
 
 
   let price = 0

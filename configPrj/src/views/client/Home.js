@@ -29,7 +29,6 @@ function Home(p) {
             <SliderOffers {...p} />
         </Column>
 
-
         <Column>
             <Footer {...p} />
         </Column>

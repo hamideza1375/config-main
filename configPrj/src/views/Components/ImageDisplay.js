@@ -38,7 +38,7 @@ const ImageDisplay = (p) => {
                 p.$?.id(item).setNativeProps({ style: { borderWidth: 1, borderColor: 'aqua' } });
                 p.$?.id('img').$({ src: item })
 
-              }}   >
+              }} >
                {item? <Img f={1} m={4} br={4} style={{ resizeMode: 'stretch' }} src={item} /> : <></> }
               </Press>
             ))}
