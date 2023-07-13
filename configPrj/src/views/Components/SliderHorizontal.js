@@ -12,10 +12,10 @@ const SliderOffers = (p) => {
 
   useEffect(() => {
     p.setoffers([
-      { id: '1', title: '1', imageUrl: 'p1.png',price:100000, offerValue:10, offerTime:{exp:Date.now() + 100 * 1000 * 60 * 60 , value:100} },
-      { id: '2', title: '2', imageUrl: 'e.png',price:200000, offerValue:10, offerTime:{exp:Date.now() + 100 * 1000 * 60 * 60 , value:100} },
-      { id: '3', title: '3', imageUrl: '7.png',price:300000, offerValue:10, offerTime:{exp:Date.now() + 100 * 1000 * 60 * 60 , value:100} },
-      { id: '4', title: '4', imageUrl: 'e.png',price:400000, offerValue:10, offerTime:{exp:Date.now() + 100 * 1000 * 60 * 60 , value:100} },
+      { _id: '', title: '1', imageUrl: 'p1.png',price:100000, offerValue:10, offerTime:{exp:Date.now() + 100 * 1000 * 60 * 60 , value:100} },
+      { _id: '2', title: '2', imageUrl: 'e.png',price:200000, offerValue:10, offerTime:{exp:Date.now() + 100 * 1000 * 60 * 60 , value:100} },
+      { _id: '3', title: '3', imageUrl: '7.png',price:300000, offerValue:10, offerTime:{exp:Date.now() + 100 * 1000 * 60 * 60 , value:100} },
+      { _id: '4', title: '4', imageUrl: 'e.png',price:400000, offerValue:10, offerTime:{exp:Date.now() + 100 * 1000 * 60 * 60 , value:100} },
     ])
   }, [])
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Platform, LogBox, I18nManager, StatusBar, useWindowDimensions, Dimensions, View } from "react-native";
+import { Platform, LogBox, I18nManager, useWindowDimensions, Dimensions } from "react-native";
 
 import Home from './views/client/Home'
 import Products from './views/client/Products'

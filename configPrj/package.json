@@ -28,7 +28,7 @@
     "prop-types": "^15.8.1",
     "push.js": "^1.0.12",
     "react": "18.2.0",
-    "react-dom": "^18.1.0",
+    "react-dom": "^18.2.0",
     "react-error-boundary": "^4.0.4",
     "react-native": "0.71.6",
     "react-native-background-timer": "^2.4.1",
@@ -47,7 +47,6 @@
     "react-native-web": "^0.18.10",
     "react-native-webview": "^11.26.0",
     "socket.io-client": "^4.6.0",
-    "use-immer": "^0.9.0",
     "web-vitals": "^3.3.1"
   },
   "devDependencies": {
