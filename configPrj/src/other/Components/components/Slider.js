@@ -25,9 +25,9 @@ function Slider({ style, onClick, data }) {
     setTimeout(() => {
       if (ref.current) { ref.current.scrollTo({ x: width * count, y: 0, animated: true }); setbadgeActive(count) }
       if (count === 0) { plus = true; minus = false }
-      if (count === (data.length - 1)) { minus = true; plus = false }
+      else if (count === 5) { minus = true; plus = false }
       if (minus) { count = count - 1 }
-      if (plus) { count += 1 }
+      else if (plus) { count += 1 }
     }, 2000);
   }, [])
 
@@ -36,9 +36,9 @@ function Slider({ style, onClick, data }) {
   const open = () => {
     if (ref.current) { ref.current.scrollTo({ x: width * count, y: 0, animated: true }); setbadgeActive(count) }
     if (count === 0) { plus = true; minus = false }
-    if (count === (data.length - 1)) { minus = true; plus = false }
+    else if (count === 5) { minus = true; plus = false }
     if (minus) { count = count - 1 }
-    if (plus) { count += 1 }
+    else if (plus) { count += 1 }
   };
 
   const right = () => {
@@ -48,7 +48,7 @@ function Slider({ style, onClick, data }) {
   };
 
   const left = () => {
-    if (count !== (data.length - 1)) count += 1
+    if (count !== 5) count += 1
     ref.current && ref.current.scrollTo({ x: width * count, y: 0, animated: true });
     setbadgeActive(count)
   };
@@ -67,7 +67,7 @@ function Slider({ style, onClick, data }) {
   }
   const left2 = () => {
     if (moving) {
-      if (count !== (data.length - 1)) count += 1
+      if (count !== 5) count += 1
       ref.current && ref.current.scrollTo({ x: width * count, y: 0, animated: true });
       setbadgeActive(count)
       moving = false
@@ -151,7 +151,7 @@ function Slider({ style, onClick, data }) {
 
       <Row fd='row-reverse' pos='absolute' b={15} w='100%' jc='center' >
         {data.map((image, index) => (
-          data.length !== index ? <Column key={index} w={18} ><Badge h={7} w={12} bgcolor={badgeActive === index ? '#0cf' : '#fff8'} /></Column> : <View key={index} />
+          data.length - 1 !== index ? <Column key={index} w={18} ><Badge h={7} w={12} bgcolor={badgeActive === index ? '#0cf' : '#fff8'} /></Column> : <View key={index} />
         ))
         }
       </Row>
