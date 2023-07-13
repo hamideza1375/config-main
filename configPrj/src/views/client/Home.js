@@ -4,6 +4,7 @@ import Category from "../Components/Category";
 import SliderOffers from "../Components/SliderHorizontal";
 import Footer from "../Components/Footer";
 import Banner from "../Components/Banner";
+import Hook from "../Components/Hook";
 
 function Home(p) {
 
@@ -38,5 +39,5 @@ function Home(p) {
   )
 }
 
-export default Home
+export default Hook(Home)
 

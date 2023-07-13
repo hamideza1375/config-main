@@ -2,18 +2,23 @@ import { useEffect } from 'react';
 import { Column, Img, P, Press, ScrollSlider } from '../../other/Components/Html'
 import LinearGradient from '../../other/Components/other/LinearGradient'
 import { localhost } from '../../other/utils/axios/axios'
+import normalizationState from '../../other/utils/normalizationState';
 
+const data = [
+  { _id: '1', title: '1', imageUrl: 'p1.png' },
+  { _id: '2', title: '2', imageUrl: 'e.png' },
+  { _id: '3', title: '3', imageUrl: '7.png' },
+  { _id: '4', title: '4', imageUrl: 'e.png' },
+]
 
 const Category = (p) => {
 
   useEffect(() => {
-    p.setcategory([
-      { _id: '', title: '1', imageUrl: 'p1.png' },
-      { _id: '2', title: '2', imageUrl: 'e.png' },
-      { _id: '3', title: '3', imageUrl: '7.png' },
-      { _id: '4', title: '4', imageUrl: 'e.png' },
-    ])
+    let normalization = new normalizationState(data)
+    normalization.find('3').title = '333'
+    p.setcategory(normalization.value)
   }, [])
+
 
 
   return (
