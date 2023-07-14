@@ -29,7 +29,7 @@ function ScrollSlider(p) {
   useEffect(() => { setchange(true); setTimeout(() => { setchange(false) }, 700); }, [])
 
   const open = () => {
-    if (scroll2 && sc) {
+    if (scroll2 && sc && (count.current.count < data.length)) {
       try { (data.length || (cacheData.length > 1)) && ref.current?.scrollToIndex({ index: count.current.count, animated: true }); }
       catch (err) { }
       count.current.count = count.current.count + 1
