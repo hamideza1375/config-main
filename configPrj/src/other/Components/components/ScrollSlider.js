@@ -29,16 +29,17 @@ function _ScrollSlider(p) {
   useEffect(() => { setchange(true); setTimeout(() => { setchange(false) }, 700); }, [])
 
   const open = () => {
-    if (scroll2 && sc && (count.current.count < data.length)) {
+    if (sc && (cacheData.length ? ((count.current.count + 2) < cacheData.length) : ((count.current.count + 2) < data.length))) {
       try { ref.current?.scrollToIndex({ index: count.current.count, animated: true }); }
       catch (err) { }
       count.current.count = count.current.count + 1
       old = count.current.count
     }
+  if (cacheData.length ? ((count.current.count + 1) > cacheData.length) : ((count.current.count + 1) > data.length)) { interval.current && clearInterval(interval.current.interval) }
   };
 
   const open2 = () => {
-    if ((parseInt(count.current.count) >= old + 1 || parseInt(count.current.count) <= old - 1) && (data.length || (cacheData.length > 1))) {
+    if ((parseInt(count.current.count) >= old + 1 || parseInt(count.current.count) <= old - 1) && ((cacheData.length) || (data.length))) {
       old = (parseInt(count.current.count))
       try { ref.current?.scrollToIndex({ index: parseInt(count.current.count), animated: true }); }
       catch (err) { }
@@ -48,7 +49,6 @@ function _ScrollSlider(p) {
   };
 
 
-  if (count.current.count + 1 >= data.length) { interval.current && clearInterval(interval.current.interval) }
   if (!scroll2) { interval.current && clearInterval(interval.current.interval) }
 
 
@@ -97,7 +97,7 @@ function _ScrollSlider(p) {
           if (Platform.OS === 'web')
             if (navigator?.userAgent?.match('Mobile') != 'Mobile') {
               das.push(e.nativeEvent.pageX)
-              if (das[0] > das[1]) if ((count.current.count < data.length - 1)) count.current.count = count.current.count + .2
+              if (das[0] > das[1]) if ((count.current.count < ((cacheData.length) ? (cacheData.length - 1) : ( data.length -1)))) count.current.count = count.current.count + .2
               if (das[0] < das[1]) if (count.current.count >= 1) count.current.count = count.current.count - .2
               setTimeout(() => {
                 open2()
@@ -138,17 +138,7 @@ function _ScrollSlider(p) {
 
 
 const ScrollSlider = (p) => {
-  // const [cacheData, setcacheData] = useState([])
-
-  // useLayoutEffect(() => {
-  //   (async () => {
-  //     const cacheData = await AsyncStorage.getItem(p.cacheId)
-  //     if (cacheData) JSON.parse(cacheData) && (JSON.parse(cacheData)?.length !== 1) && (setcacheData(JSON.parse(cacheData)))
-  //   })()
-  // }, [])
-
-  if (p.data?.length) return <_ScrollSlider {...p} />
-  else return <Column />
+  return <_ScrollSlider {...p} />
 }
 
 export default ScrollSlider

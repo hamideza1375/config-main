@@ -1,3 +1,4 @@
+
 // import Icon3 from 'react-native-vector-icons/dist/FontAwesome5';
 // const iconFontStyles = `
 //         @font-face { src: url(${require('react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf')}); font-family: FontAwesome5_Brands;  }
