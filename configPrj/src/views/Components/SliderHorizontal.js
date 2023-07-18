@@ -8,7 +8,7 @@ import CardItem from './CardItem'
 import { localhost } from '../../other/utils/axios/axios'
 
 
-const SliderOffers = (p) => {
+const SliderHorizontal = (p) => {
 
   useEffect(() => {
     p.setoffers([
@@ -52,4 +52,4 @@ const SliderOffers = (p) => {
   )
 }
 
-export default SliderOffers
+export default SliderHorizontal
