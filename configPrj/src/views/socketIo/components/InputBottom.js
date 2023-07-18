@@ -11,34 +11,36 @@ export default function InputBottom(p) {
 
 
   const sendMessage = (type, fileName) => {
-    if (type === 'image') {
-      p.socket.current.emit("pvChat", {
-        userId: p.tokenSocket.current,
-        to: p.to,
-        isAdmin: p.tokenValue.current.isAdmin,
-        uri: fileName,
-        type: 'image'
-      });
-    }
-    else if (type === 'video') {
-      p.socket.current.emit("pvChat", {
-        userId: p.tokenSocket.current,
-        to: p.to,
-        isAdmin: p.tokenValue.current.isAdmin,
-        uri: fileName,
-        type: 'video'
-      });
-    }
-    else if (type === 'audio') {
-      p.socket.current.emit("pvChat", {
-        userId: p.tokenSocket.current,
-        to: p.to,
-        isAdmin: p.tokenValue.current.isAdmin,
-        uri: fileName,
-        type: 'audio'
-      });
-    }
-    setTimeout(() => { p.onClick()}, 1000);
+    setTimeout(() => {
+      if (type === 'image') {
+        p.socket.current.emit("pvChat", {
+          userId: p.tokenSocket.current,
+          to: p.to,
+          isAdmin: p.tokenValue.current.isAdmin,
+          uri: fileName,
+          type: 'image'
+        });
+      }
+      else if (type === 'video') {
+        p.socket.current.emit("pvChat", {
+          userId: p.tokenSocket.current,
+          to: p.to,
+          isAdmin: p.tokenValue.current.isAdmin,
+          uri: fileName,
+          type: 'video'
+        });
+      }
+      else if (type === 'audio') {
+        p.socket.current.emit("pvChat", {
+          userId: p.tokenSocket.current,
+          to: p.to,
+          isAdmin: p.tokenValue.current.isAdmin,
+          uri: fileName,
+          type: 'audio'
+        });
+      }
+      setTimeout(() => { p.onClick() }, 1000);
+    }, 3000);
   }
 
 
