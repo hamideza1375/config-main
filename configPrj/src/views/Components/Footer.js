@@ -4,7 +4,7 @@ import { Icon, Img, Py, Column, Row, Pfa, P } from '../../other/Components/Html'
 import { localhost } from '../../other/utils/axios/axios'
 
 const topCol = {flexDirection: 'row-reverse', width:'98%', alignItems: 'flex-end',}
-const relation ={justifyContent: 'slex-end', flexDirection: 'column',}
+const relation ={justifyContent: 'slex-end'}
 const Footer = () => {
   return (
     <Column fd='row' p={10} bgcolor='#0d1e2d' fw='wrap' jc='flex-end'>

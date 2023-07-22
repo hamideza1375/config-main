@@ -5,4 +5,5 @@ export default function normalizationState(array) {
   this.remove = (id) => { delete obj[id] }
   this.find = (id) => { return obj[id] ? obj[id] : {} }
   this.findIndex = (id) => { return Object.keys(obj).findIndex((_id) => (_id === id)) }
+  this.changeIndex = (id) => { return obj[id] ? Object.values(obj)[id] :{} }
 }
