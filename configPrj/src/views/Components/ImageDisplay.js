@@ -30,6 +30,20 @@ const ImageDisplay = (p) => {
   }, [])
 
 
+
+  // useEffect(() => {
+  //   p.$?.id(imageMap[0])?.setNativeProps({ style: { borderWidth: 1, borderColor: 'aqua' } })
+  // }, [p.singleItem])
+  
+  // _useEffect(() => {
+  //   return()=>{
+  //   p.$?.id(imageMap[1])?.setNativeProps({ style: { borderWidth: 0 } })
+  //   p.$?.id(imageMap[2])?.setNativeProps({ style: { borderWidth: 0 } })
+  //   p.$?.id(imageMap[3])?.setNativeProps({ style: { borderWidth: 0 } })
+  //   }
+  // }, [])
+
+
   return (
     <Column minw={250} w='100%' ai='center' jc='center'>
       <Card2 h={400} w='100%' style={{ borderColor: 'silver', backgroundColor: 'white', borderRadius: 8 }}

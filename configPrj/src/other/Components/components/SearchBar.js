@@ -84,6 +84,7 @@ function SearchInput({ iconSrc, table, iconBack, children, drawer, showDrawer, s
                 // textContentType={'none'}
                 autoComplete={'off'}
                 value={textSearch} onChangeText={text => {
+                  throw new Error()
                   settextSearch(text.toLowerCase());
                   p.$input.get('dropdownDrawer')?.current?.setNativeProps({ style: { display: 'flex', transform: [{ scale: 1 }] } })
                   startTransition(() => {
