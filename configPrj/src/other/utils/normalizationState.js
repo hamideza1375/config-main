@@ -7,8 +7,8 @@ export default function normalizationState(array, setarray = () => { }) {
   this.find = (id) => { return obj[id] ? obj[id] : {} }
   this.findIndex = (id) => { return this.newArray.findIndex((_id) => (_id === id)) }
   this.changeIndex = (index) => { return (array[index] ? this.newArray[index] : {}) }
-  this.push = (data) => { this.newArray.push(data) }
-  this.unshift = (data) => { this.newArray.unshift(data) }
+  this.push = (data) => { this.newArray.push(data); obj[data._id] = data }
+  this.unshift = (data) => { this.newArray.unshift(data); obj[data._id] = data }
   this.splice = (num1, num2, data) => { data ? this.newArray.splice(num1, num2, data) : this.newArray.splice(num1, num2) }
   this.slice = (num1, num2) => { this.newArray = this.newArray.slice(num1, num2) }
   this.sort = (key) => { this.newArray.sort((a, b) => (a[key] - b[key])); }

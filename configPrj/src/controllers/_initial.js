@@ -39,7 +39,7 @@ export const _initController = (p) => {
     setTimeout(() => { setchange(true) }, 100);
 
     if (change) {
-      if (netInfo.isConnected !== false) {
+      if (netInfo.isConnected !== false || true) {
         setTimeout(() => { serverOff2 = true }, 7000);
         Axios.interceptors.response.use(function (response) {
           p.setshowActivity(false)
@@ -132,12 +132,13 @@ const SplashScreen = (state) => {
 }
 
 export function allChildren({ client, user, admin }) {
-  const [show, setshow] = useState(true)
+  const [show, setshow] = useState(false)
   const netInfo = useNetInfo()
 
   useLayoutEffect(() => {
     setTimeout(() => {
-      netInfo.isConnected && setshow(true)
+      // netInfo.isConnected && setshow(true)
+      setshow(true)
     }, 150);
   }, [netInfo])
 

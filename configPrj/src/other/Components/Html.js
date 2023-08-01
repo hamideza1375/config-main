@@ -95,7 +95,6 @@ export const ComponentForScroll = React.forwardRef((props, ref) => {
         web: {
           flexWrap: fw, elevation: el,
           shadowRadius: sh.r, shadowOpacity: sh.o, shadowColor: sh.c, shadowOffset: sh.of,
-          transform: [{ scale }, { rotate: rotate + 'deg' }],
           borderTopWidth: btw, borderRadius: br,
           borderBottomWidth: bbw, borderLeftWidth: blw, borderRightWidth: brw,
           minWidth: minw, maxWidth: maxw, minHeight: minh, maxHeight: maxh,
@@ -112,7 +111,6 @@ export const ComponentForScroll = React.forwardRef((props, ref) => {
         native: {
           flexWrap: fw, elevation: el,
           shadowRadius: sh.r, shadowOpacity: sh.o, shadowColor: sh.c, shadowOffset: sh.of,
-          transform: [{ scale }, { rotate: rotate + 'deg' }],
           borderTopWidth: btw, borderRadius: br,
           borderBottomWidth: bbw, borderLeftWidth: blw, borderRightWidth: brw,
           minWidth: minw, maxWidth: maxw, minHeight: minh, maxHeight: maxh,
@@ -561,7 +559,7 @@ export const FlatList = ({ cacheId, pageLimit, loading = true, column1, column2,
       (data?.length || (cacheData.length > 1))
         ?
         <>
-          <Component
+          <ComponentForScroll
             style={[{ flexWrap: 'nowrap', paddingBottom: 50 }, props.style]}
             {...props}
             data={current}
